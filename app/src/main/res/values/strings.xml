@@ -1,0 +1,21 @@
+<resources>
+    <string name="app_name">ProjectOrganizer</string>
+    <string name="image_contentDescription">ProjectOrganizer</string>
+    <string name="let_s_get_started_text">Iniziamo a collaborare!</string>
+    <string name="intro_text_description">Collaboriamo!</string>
+    <string name="sign_in">ACCEDI</string>
+    <string name="sign_up">REGISTRATI</string>
+    <string name="sign_up_description_text">Inserisci i tuoi dati</string>
+    <string name="name">Nome</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+
+
+
+
+    <!--START string dialog progress-->
+    <string name="please_click_back_again_to_exit">Premi un\'altra volta per chiudere l\'applicazione.</string>
+    <string name="please_wait">Attendi&#8230;</string>
+    <!--END string dialog progress-->
+
+</resources>

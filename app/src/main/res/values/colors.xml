@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+    <resources>
+        <color name="colorPrimary">#0CF136</color>
+        <color name="colorPrimaryDark">#104D0C</color>
+        <color name="colorAccent">#1F7D15</color>
+        <color name="primary_text_color">#363A43</color>
+        <color name="secondary_text_color">#7A8089</color>
+
+        <color name="purple_200">#6200FF</color>
+        <color name="purple_700">#5B005D</color>
+        <color name="black">#000000</color>
+        <color name="teal_200">#363A43</color>
+        <color name="white">#FFFFFF</color>
+        <color name="snackbar_error_color">#f72400</color>
+</resources>
