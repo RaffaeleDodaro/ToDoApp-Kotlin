@@ -22,9 +22,10 @@ class IntroActivity : BaseActivity() {
 
 
         auth = FirebaseAuth.getInstance()
-        val user=auth.currentUser
+        val user=auth.currentUser // verifico se l'utente in precedenza aveva gia' fatto l'accesso
 
 
+        //nascondo la statusbar
         @Suppress("DEPRECATION")
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             window.insetsController?.hide(WindowInsets.Type.statusBars())
@@ -36,6 +37,10 @@ class IntroActivity : BaseActivity() {
         }
 
         if(user !=null) {
+            // permette di attivare ogni componente di una applicazione,
+            // quindi anche una Activity, ma in generale di trasmettere
+            // delle informazioni tra componenti e di farli comunicare l'uno con l'altro
+            // o con altre applicazioni.
             val dashboardIntent = Intent(this, MainActivity::class.java)
             startActivity(dashboardIntent)
         }

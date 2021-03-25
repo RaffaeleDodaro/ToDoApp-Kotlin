@@ -14,59 +14,31 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
 import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.projectorganizer.projectorganizer.R
 import com.projectorganizer.projectorganizer.activities.BaseActivity
 import com.projectorganizer.projectorganizer.activities.MainActivity
+import com.projectorganizer.projectorganizer.firebase.FirestoreClass
+import com.projectorganizer.projectorganizer.models.User
 
 class LoginActivity : BaseActivity() {
 
-    companion object {
-        private const val RC_SIGN_IN=120
-    }
-
+    // [START declare_auth]
     private lateinit var auth: FirebaseAuth
-    private lateinit var googleSignInClient: GoogleSignInClient
+    // [END declare_auth]
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
-
-        // Configure Google Sign In
-        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken(getString(R.string.default_web_client_id))
-            .requestEmail()
-            .build()
-
-        googleSignInClient = GoogleSignIn.getClient(this, gso)
-
-        auth = FirebaseAuth.getInstance()
-
-        //nascondo la statusbar
-        @Suppress("DEPRECATION")
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            window.insetsController?.hide(WindowInsets.Type.statusBars())
-        } else {
-            window.setFlags(
-                    WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                    WindowManager.LayoutParams.FLAG_FULLSCREEN
-            )
-        }
-
         setupActionBar()
-
-
-        //accesso google
-        findViewById<Button>(R.id.btn_sign_in2).setOnClickListener {
-            signIn()
-        }
 
         //leggo i valori per login
         findViewById<Button>(R.id.btn_sign_in).setOnClickListener {
@@ -80,66 +52,16 @@ class LoginActivity : BaseActivity() {
         }
     }
 
-    private fun signIn() {
-        val signInIntent = googleSignInClient.signInIntent
-        startActivityForResult(signInIntent, RC_SIGN_IN)
-    }
-
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-
-        // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
-        if (requestCode == RC_SIGN_IN) {
-            val task = GoogleSignIn.getSignedInAccountFromIntent(data)
-            val exception=task.exception
-            if(task.isSuccessful)
-            {
-                try {
-                    // Google Sign In was successful, authenticate with Firebase
-                    val account = task.getResult(ApiException::class.java)!!
-                    Log.d("SignInActivity", "firebaseAuthWithGoogle:" + account.id)
-                    firebaseAuthWithGoogle(account.idToken!!)
-                } catch (e: ApiException) {
-                    // Google Sign In failed, update UI appropriately
-                    Log.w("SignInActivity", "Google sign in failed", e)
-                }
-            }
-            else
-            {
-                Log.w("SignInActivity", exception.toString())
-            }
-        }
-
-    }
-
-    private fun firebaseAuthWithGoogle(idToken: String) {
-        val credential = GoogleAuthProvider.getCredential(idToken, null)
-        auth.signInWithCredential(credential)
-            .addOnCompleteListener(this) { task ->
-                if (task.isSuccessful) {
-                    // Sign in success, update UI with the signed-in user's information
-                    Log.d("SignInActivity", "signInWithCredential:success")
-                    val intent=Intent(this,MainActivity::class.java)
-                    startActivity(intent)
-                } else {
-                    // If sign in fails, display a message to the user.
-                    Log.w("SignInActivity", "signInWithCredential:failure", task.exception)
-                }
-            }
-    }
-
-
     private fun validateForm(email:String,password:String):Boolean
     {
         //when equivale allo switch
         return when{
             TextUtils.isEmpty(email)->{
-                showErrorSnackBar("Inserisci un indirizzo email")
+                showErrorSnackBar("Inserisci un indirizzo email") // disegna un rettangolo arancione in fondo lo schermo
                 false
             }
             TextUtils.isEmpty(password)->{
-                showErrorSnackBar("Inserisci una password")
+                showErrorSnackBar("Inserisci una password")// disegna un rettangolo arancione in fondo lo schermo
                 false
             }
             else -> {
@@ -150,22 +72,33 @@ class LoginActivity : BaseActivity() {
 
     private fun login(email:String,password:String)
     {
-        auth.signInWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this) { task ->
+        /*auth.signInWithEmailAndPassword(email, password) //signInWithEmailAndPassword e' un metodo di firebase auth
+                .addOnCompleteListener(this) { task -> //addOnCompleteListener serve per gestire il successo e fallimento del listener
                     hideProgressDialog()
                     if (task.isSuccessful) {
-                        // Sign in success, update UI with the signed-in user's information
-                        Log.d("Sign in", "signInWithEmail:success")
-                        val user = auth.currentUser
-                        startActivity(Intent(this,MainActivity::class.java))
+                        // Login effettuato con successo
+                        FirestoreClass().signInUser(this)
                     } else {
                         // If sign in fails, display a message to the user.
-                        Log.w("Sign in", "signInWithEmail:failure", task.exception)
                         Toast.makeText(baseContext, "Utente non trovato o email/password non corrette",
                                 Toast.LENGTH_SHORT).show()
                     }
+                }*/
+        FirebaseAuth.getInstance().signInWithEmailAndPassword(email, password)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    // Calling the FirestoreClass signInUser function to get the data of user from database.
+                    FirestoreClass().signInUser(this)
+                } else {
+                    Toast.makeText(
+                        this,
+                        task.exception!!.message,
+                        Toast.LENGTH_LONG
+                    ).show()
                 }
+            }
     }
+
 
 
     //aggiunge una freccia alla schermata sign in che permette di tornare indietro
@@ -178,4 +111,12 @@ class LoginActivity : BaseActivity() {
         }
         findViewById<Toolbar>(R.id.toolbar_sign_in_activity).setNavigationOnClickListener { onBackPressed() }
     }
+
+    fun signInSuccess(user: User)
+    {
+        hideProgressDialog()
+        startActivity(Intent(this, MainActivity::class.java))
+        finish()
+    }
+
 }

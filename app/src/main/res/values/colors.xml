@@ -13,4 +13,9 @@
         <color name="teal_200">#363A43</color>
         <color name="white">#FFFFFF</color>
         <color name="snackbar_error_color">#f72400</color>
+
+
+    <color name="design_default_color_primary">#0CF136</color>
+    <color name="design_default_color_primary_variant">#104D0C</color>
+    <color name="design_default_color_on_primary">#1F7D15</color>
 </resources>

@@ -17,9 +17,6 @@
     <string name="please_click_back_again_to_exit">Premi un\'altra volta per chiudere l\'applicazione.</string>
     <string name="please_wait">Attendi&#8230;</string>
     <!--END string dialog progress-->
-
-    <string name="facebook_app_id">1096459850835570</string>
-    <string name="fb_login_protocol_scheme">fb1096459850835570</string>
-
-
+    <string name="nav_my_profile">Il mio profilo</string>
+    <string name="nav_log_out">Esci</string>
 </resources>

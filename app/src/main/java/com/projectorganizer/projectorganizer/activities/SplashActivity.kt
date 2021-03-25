@@ -11,6 +11,7 @@ import android.view.WindowInsets
 import android.view.WindowManager
 import android.widget.TextView
 import com.projectorganizer.projectorganizer.R
+import com.projectorganizer.projectorganizer.firebase.FirestoreClass
 
 class SplashActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -18,6 +19,7 @@ class SplashActivity : BaseActivity() {
         setContentView(R.layout.activity_splash)
 
         //nascondo la status bar
+        //nascondo la statusbar
         @Suppress("DEPRECATION")
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             window.insetsController?.hide(WindowInsets.Type.statusBars())
@@ -36,10 +38,12 @@ class SplashActivity : BaseActivity() {
         //eseguo la splashscreen per 2 sec
         Handler(Looper.getMainLooper()).postDelayed(
             {
-                startActivity(
-                    Intent(this, IntroActivity::class.java)
-                )
-                finish()
+                var currentUserID= FirestoreClass().getCurrentUserId()
+                if(currentUserID.isNotEmpty()) // se nel dispositivo c'e' gia' un account dell'utente, fa il login auto
+                    startActivity(Intent(this, MainActivity::class.java))
+                else //altrimenti sign in o signup
+                    startActivity(Intent(this, IntroActivity::class.java))
+                finish() //Call this when your activity is done and should be closed.
             },2000)
     }
 }

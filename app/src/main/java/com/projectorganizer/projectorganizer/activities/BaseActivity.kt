@@ -1,10 +1,13 @@
 package com.projectorganizer.projectorganizer.activities
 
 import android.app.Dialog
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.view.WindowInsets
+import android.view.WindowManager
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
@@ -23,11 +26,8 @@ open class BaseActivity : AppCompatActivity() {
 
     fun showProgressDialog(text:String){
         mProgressDialog=Dialog(this)
-
         mProgressDialog.setContentView(R.layout.dialog_progress)
-
         mProgressDialog.findViewById<TextView>(R.id.tv_progress_text).text=text
-
         mProgressDialog.show()
     }
 
@@ -36,12 +36,7 @@ open class BaseActivity : AppCompatActivity() {
         mProgressDialog.dismiss()
     }
 
-    fun getCurrentUserID():String
-    {
-        return FirebaseAuth.getInstance().currentUser!!.uid
-    }
-
-    fun doubleBackToexit()
+    fun doubleBackToExit()
     {
         //al secondo click fai questo
         if(doubleBackToExitPressedOnce)
@@ -55,6 +50,7 @@ open class BaseActivity : AppCompatActivity() {
         Toast.makeText(this,resources.getString(R.string.please_click_back_again_to_exit),Toast.LENGTH_SHORT).show()
 
         //se l'utente preme due volte il tasto indietro e la seconda e' all'"interno" di due secodni -> chiudi l'applicazione
+        //call a method after a delay in Android
         Handler(Looper.getMainLooper()).postDelayed(
             {
                 doubleBackToExitPressedOnce=false
@@ -81,4 +77,16 @@ open class BaseActivity : AppCompatActivity() {
         setContentView(R.layout.activity_base)
     }
 
+    fun setupStatusBar() {
+        //nascondo la statusbar
+        @Suppress("DEPRECATION")
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            window.insetsController?.hide(WindowInsets.Type.statusBars())
+        } else {
+            window.setFlags(
+                WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN
+            )
+        }
+    }
 }

@@ -9,10 +9,14 @@ import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
+import com.google.android.gms.tasks.OnCompleteListener
+import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.projectorganizer.projectorganizer.R
 import com.projectorganizer.projectorganizer.activities.BaseActivity
+import com.projectorganizer.projectorganizer.firebase.FirestoreClass
+import com.projectorganizer.projectorganizer.models.User
 
 class SignUpActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -25,8 +29,8 @@ class SignUpActivity : BaseActivity() {
             window.insetsController?.hide(WindowInsets.Type.statusBars())
         } else {
             window.setFlags(
-                    WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                    WindowManager.LayoutParams.FLAG_FULLSCREEN
+                WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN
             )
         }
 
@@ -36,7 +40,7 @@ class SignUpActivity : BaseActivity() {
     //aggiunge una freccia alla schermata sign up che permette di tornare indietro
     private fun setupActionBar()
     {
-        setSupportActionBar(findViewById<Toolbar>(R.id.toolbar_sign_in_activity))
+        setSupportActionBar(findViewById<Toolbar>(R.id.toolbar_sign_in_activity)) //Set a Toolbar to act as the ActionBar for this Activity window
         val actionBar=supportActionBar
         if(actionBar!=null){
             actionBar.setDisplayHomeAsUpEnabled(true)
@@ -46,6 +50,15 @@ class SignUpActivity : BaseActivity() {
         findViewById<Button>(R.id.btn_sign_up).setOnClickListener {
             registerUser()
         }
+    }
+
+    fun userRegisteredSuccess()
+    {
+        Toast.makeText(this,"Ti sei registrato correttamente",Toast.LENGTH_LONG).show()
+        hideProgressDialog()
+
+        FirebaseAuth.getInstance().signOut() //faccio il signout e obbligo l'utente ad accedere al nuovo account
+        finish()
     }
 
     private fun validateForm(name:String,email:String,password:String):Boolean
@@ -72,24 +85,20 @@ class SignUpActivity : BaseActivity() {
 
     private fun registerUser()
     {
-        val name:String = findViewById<TextView>(R.id.et_name).text.toString().trim(){it<=' '} //trim ritorna una stringa senza spazi
-        val email:String = findViewById<TextView>(R.id.et_email).text.toString().trim(){it<=' '}
+        val name:String = findViewById<TextView>(R.id.et_name).text.toString().trim() //trim ritorna una stringa senza spazi
+        val email:String = findViewById<TextView>(R.id.et_email).text.toString().trim()
         val password:String = findViewById<TextView>(R.id.et_password).text.toString()
         if(validateForm(name,email,password)) {
             showProgressDialog(resources.getString(R.string.please_wait))
-            FirebaseAuth.getInstance().createUserWithEmailAndPassword(email,password).addOnCompleteListener(){
-                task -> hideProgressDialog()
-                if (task.isSuccessful)
-                {
-                    val firebaseUser:FirebaseUser = task.result!!.user!!
-                    val registeredEmail=firebaseUser.email!!
-                    Toast.makeText(this,"$name Ti sei registrato correttamente con l'email $registeredEmail",Toast.LENGTH_LONG).show()
-                    FirebaseAuth.getInstance().signOut()
-                    finish()
-                }
-                else
-                {
-                    Toast.makeText(this,"Registrazione non riuscita",Toast.LENGTH_SHORT).show()
+            FirebaseAuth.getInstance().createUserWithEmailAndPassword(email,password)
+                    .addOnCompleteListener { task -> //addOnCompleteListener serve per gestire il successo e fallimento del listener
+                if (task.isSuccessful) {
+                    val firebaseUser: FirebaseUser = task.result!!.user!! // !! lancia un'eccezione se result e' nullo
+                    val registeredEmail = firebaseUser.email!!
+                    val user = User(firebaseUser.uid, name, registeredEmail) // uid Returns a string used to uniquely identify your user in your Firebase project's
+                    FirestoreClass().registerUser(this, user)
+                } else {
+                    Toast.makeText(this, "Registrazione non riuscita", Toast.LENGTH_SHORT).show()
                 }
             }
         }
