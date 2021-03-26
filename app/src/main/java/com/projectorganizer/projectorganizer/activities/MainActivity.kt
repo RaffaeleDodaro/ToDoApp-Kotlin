@@ -4,13 +4,19 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.MenuItem
+import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
+import com.bumptech.glide.Glide
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.projectorganizer.projectorganizer.R
+import com.projectorganizer.projectorganizer.activities.accountHandler.MyProfileActivity
+import com.projectorganizer.projectorganizer.firebase.FirestoreClass
+import com.projectorganizer.projectorganizer.models.User
 
 class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedListener {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -18,6 +24,8 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         setContentView(R.layout.activity_main)
         setupActionBar()
         findViewById<NavigationView>(R.id.nav_view).setNavigationItemSelectedListener(this)
+
+        FirestoreClass().loadUserData(this)
     }
 
     private fun setupActionBar()
@@ -53,7 +61,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         when(item.itemId)//simile allo switch
         {
             R.id.nav_my_profile ->{ //se e' stato premuto il mio profilo
-                Toast.makeText(this,"Il mio profilo",Toast.LENGTH_SHORT).show()
+                startActivity(Intent(this,MyProfileActivity::class.java))
             }
 
             R.id.nav_log_out ->{//se e' stato premuto il logout
@@ -68,6 +76,23 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         }
         findViewById<DrawerLayout>(R.id.drawer_layout).closeDrawer(GravityCompat.START)
         return true
+    }
+
+    fun updateNavigationUserDetails(user: User)
+    {
+        /*
+            Glide is a fast and efficient open source media management and image loading framework for
+            Android that wraps media decoding, memory and disk caching, and resource pooling into a
+            simple and easy to use interface.
+         */
+        Glide
+                .with(this)
+                .load(user.image)
+                .centerCrop()
+                .placeholder(R.drawable.ic_user_place_holder)
+                .into(findViewById<ImageView>(R.id.nav_user_image_profile))
+        findViewById<TextView>(R.id.tv_username).text=user.name
+
     }
 
 }

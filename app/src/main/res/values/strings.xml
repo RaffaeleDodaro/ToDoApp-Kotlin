@@ -11,12 +11,18 @@
     <string name="password">Password</string>
 
 
-
-
     <!--START string dialog progress-->
     <string name="please_click_back_again_to_exit">Premi un\'altra volta per chiudere l\'applicazione.</string>
     <string name="please_wait">Attendi&#8230;</string>
     <!--END string dialog progress-->
+
+    <!--START navbar sinistra-->
     <string name="nav_my_profile">Il mio profilo</string>
     <string name="nav_log_out">Esci</string>
+    <!--END navbar sinistra-->
+
+    <!--START il mio profilo-->
+    <string name="update">Aggiorna</string>
+    <string name="my_profile_title">Il mio profilo</string>
+    <!--END il mio profilo-->
 </resources>
