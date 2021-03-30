@@ -14,7 +14,7 @@ import com.projectorganizer.projectorganizer.activities.accountHandler.SignUpAct
 
 class IntroActivity : BaseActivity() {
 
-    private lateinit var auth: FirebaseAuth
+    private lateinit var auth: FirebaseAuth // The entry point of the Firebase Authentication SDK.
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,32 +37,30 @@ class IntroActivity : BaseActivity() {
         }
 
         if(user !=null) {
-            // permette di attivare ogni componente di una applicazione,
-            // quindi anche una Activity, ma in generale di trasmettere
-            // delle informazioni tra componenti e di farli comunicare l'uno con l'altro
-            // o con altre applicazioni.
-            val dashboardIntent = Intent(this, MainActivity::class.java)
+
+            val dashboardIntent = Intent(this, MainActivity::class.java)  // permette di attivare ogni componente di una applicazione,
+                                                                                        // quindi anche una Activity, ma in generale di trasmettere
+                                                                                        // delle informazioni tra componenti e di farli comunicare l'uno con l'altro
+                                                                                        // o con altre applicazioni.
             startActivity(dashboardIntent)
         }
         else {
             findViewById<Button>(R.id.btn_sign_up_intro).setOnClickListener {
                 startActivity(
-                    // permette di attivare ogni componente di una applicazione,
-                    // quindi anche una Activity, ma in generale di trasmettere
-                    // delle informazioni tra componenti e di farli comunicare l'uno con l'altro
-                    // o con altre applicazioni.
-                    Intent(this, SignUpActivity::class.java)
+                    Intent(this, SignUpActivity::class.java)  // permette di attivare ogni componente di una applicazione,
+                                                                            // quindi anche una Activity, ma in generale di trasmettere
+                                                                            // delle informazioni tra componenti e di farli comunicare l'uno con l'altro
+                                                                            // o con altre applicazioni.
                 )
             }
 
 
             findViewById<Button>(R.id.btn_sign_in_intro).setOnClickListener {
                 startActivity(
-                    // permette di attivare ogni componente di una applicazione,
-                    // quindi anche una Activity, ma in generale di trasmettere
-                    // delle informazioni tra componenti e di farli comunicare l'uno con l'altro
-                    // o con altre applicazioni.
-                    Intent(this, LoginActivity::class.java)
+                    Intent(this, LoginActivity::class.java)   // permette di attivare ogni componente di una applicazione,
+                                                                            // quindi anche una Activity, ma in generale di trasmettere
+                                                                            // delle informazioni tra componenti e di farli comunicare l'uno con l'altro
+                                                                            // o con altre applicazioni.
                 )
             }
         }

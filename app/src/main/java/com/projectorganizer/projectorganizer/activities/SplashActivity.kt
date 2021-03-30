@@ -19,7 +19,6 @@ class SplashActivity : BaseActivity() {
         setContentView(R.layout.activity_splash)
 
         //nascondo la status bar
-        //nascondo la statusbar
         @Suppress("DEPRECATION")
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             window.insetsController?.hide(WindowInsets.Type.statusBars())

@@ -21,19 +21,19 @@ open class BaseActivity : AppCompatActivity() {
 
     private var doubleBackToExitPressedOnce=false
 
-    private lateinit var mProgressDialog: Dialog  //ogni volta che voglio far vedere all'utente
+    private lateinit var progressDialog: Dialog  //ogni volta che voglio far vedere all'utente
     //un caricamento uso questa variabile, come per esempio quando fa il login
 
     fun showProgressDialog(text:String){
-        mProgressDialog=Dialog(this)
-        mProgressDialog.setContentView(R.layout.dialog_progress)
-        mProgressDialog.findViewById<TextView>(R.id.tv_progress_text).text=text
-        mProgressDialog.show()
+        progressDialog=Dialog(this) // Creates a dialog window that uses the default dialog theme.
+        progressDialog.setContentView(R.layout.dialog_progress) //Set the screen content from a layout resource.
+        progressDialog.findViewById<TextView>(R.id.tv_progress_text).text=text
+        progressDialog.show()
     }
 
     fun hideProgressDialog()
     {
-        mProgressDialog.dismiss()
+        progressDialog.dismiss()
     }
 
     fun doubleBackToExit()
@@ -61,7 +61,9 @@ open class BaseActivity : AppCompatActivity() {
     fun showErrorSnackBar(message:String)
     {
         val snackBar =
-            Snackbar.make(findViewById(android.R.id.content), message, Snackbar.LENGTH_LONG)
+            Snackbar.make(findViewById(android.R.id.content), message, Snackbar.LENGTH_LONG) // They show a brief message at the bottom of the screen on mobile
+                                                                                             // and lower left on larger devices. Snackbars appear above all
+                                                                                             // other elements on screen
         val snackBarView = snackBar.view
         snackBarView.setBackgroundColor(
             ContextCompat.getColor(
@@ -75,18 +77,5 @@ open class BaseActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_base)
-    }
-
-    fun setupStatusBar() {
-        //nascondo la statusbar
-        @Suppress("DEPRECATION")
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            window.insetsController?.hide(WindowInsets.Type.statusBars())
-        } else {
-            window.setFlags(
-                WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN
-            )
-        }
     }
 }

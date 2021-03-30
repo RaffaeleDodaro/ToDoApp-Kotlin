@@ -23,8 +23,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setupActionBar()
-        findViewById<NavigationView>(R.id.nav_view).setNavigationItemSelectedListener(this)
-
+        findViewById<NavigationView>(R.id.nav_view).setNavigationItemSelectedListener(this) //Set a listener that will be notified when a menu item is selected.
         FirestoreClass().loadUserData(this)
     }
 
@@ -41,7 +40,10 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
 
     private fun showDrawer()
     {
-        val drawer=findViewById<DrawerLayout>(R.id.drawer_layout)
+        val drawer=findViewById<DrawerLayout>(R.id.drawer_layout)   //DrawerLayout acts as a top-level container for window
+                                                                    // content that allows for interactive "drawer" views
+                                                                    // to be pulled out from one or both vertical edges of the window
+
         if(drawer.isDrawerOpen(GravityCompat.START))
             drawer.closeDrawer(GravityCompat.START)
         else
@@ -50,7 +52,9 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
 
     override fun onBackPressed()
     {
-        val drawer=findViewById<DrawerLayout>(R.id.drawer_layout)
+        val drawer=findViewById<DrawerLayout>(R.id.drawer_layout) //DrawerLayout acts as a top-level container for window
+                                                                    // content that allows for interactive "drawer" views
+                                                                    // to be pulled out from one or both vertical edges of the window
         if(drawer.isDrawerOpen(GravityCompat.START))
             drawer.closeDrawer(GravityCompat.START)
         else
@@ -84,7 +88,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
             Glide is a fast and efficient open source media management and image loading framework for
             Android that wraps media decoding, memory and disk caching, and resource pooling into a
             simple and easy to use interface.
-         */
+        */
         Glide
                 .with(this)
                 .load(user.image)

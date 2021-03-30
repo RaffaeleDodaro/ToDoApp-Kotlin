@@ -31,6 +31,8 @@ class SignUpActivity : BaseActivity() {
             window.setFlags(
                 WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN
+                //Window flag: hide all screen decorations (such as the status bar) while this window is displayed.
+                // This allows the window to use the entire display space for itself
             )
         }
 
@@ -93,7 +95,7 @@ class SignUpActivity : BaseActivity() {
             FirebaseAuth.getInstance().createUserWithEmailAndPassword(email,password)
                     .addOnCompleteListener { task -> //addOnCompleteListener serve per gestire il successo e fallimento del listener
                 if (task.isSuccessful) {
-                    val firebaseUser: FirebaseUser = task.result!!.user!! // !! lancia un'eccezione se result e' nullo
+                    val firebaseUser: FirebaseUser = task.result!!.user!! // !! lancia un'eccezione se result o user sono nulli
                     val registeredEmail = firebaseUser.email!!
                     val user = User(firebaseUser.uid, name, registeredEmail) // uid Returns a string used to uniquely identify your user in your Firebase project's
                     FirestoreClass().registerUser(this, user)

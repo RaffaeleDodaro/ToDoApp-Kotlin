@@ -30,10 +30,6 @@ import com.projectorganizer.projectorganizer.models.User
 
 class LoginActivity : BaseActivity() {
 
-    // [START declare_auth]
-    private lateinit var auth: FirebaseAuth
-    // [END declare_auth]
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
@@ -72,18 +68,6 @@ class LoginActivity : BaseActivity() {
 
     private fun login(email:String,password:String)
     {
-        /*auth.signInWithEmailAndPassword(email, password) //signInWithEmailAndPassword e' un metodo di firebase auth
-                .addOnCompleteListener(this) { task -> //addOnCompleteListener serve per gestire il successo e fallimento del listener
-                    hideProgressDialog()
-                    if (task.isSuccessful) {
-                        // Login effettuato con successo
-                        FirestoreClass().signInUser(this)
-                    } else {
-                        // If sign in fails, display a message to the user.
-                        Toast.makeText(baseContext, "Utente non trovato o email/password non corrette",
-                                Toast.LENGTH_SHORT).show()
-                    }
-                }*/
         FirebaseAuth.getInstance().signInWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
@@ -92,7 +76,7 @@ class LoginActivity : BaseActivity() {
                 } else {
                     Toast.makeText(
                         this,
-                        task.exception!!.message,
+                        task.exception!!.message, // !! vuol dire che task NON deve essere nullo
                         Toast.LENGTH_LONG
                     ).show()
                 }
@@ -116,7 +100,7 @@ class LoginActivity : BaseActivity() {
     {
         hideProgressDialog()
         startActivity(Intent(this, MainActivity::class.java))
-        finish()
+        finish() // finisce l'attivita'
     }
 
 }

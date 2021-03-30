@@ -23,7 +23,7 @@ class MyProfileActivity : BaseActivity() {
     {
         val toolbar = findViewById<Toolbar>(R.id.toolbar_main_activity)
         setSupportActionBar(toolbar)
-        val actionBar=supportActionBar
+        val actionBar=supportActionBar // Retrieve a reference to this activity's ActionBar
         if(actionBar!=null)
         {
             actionBar.setDisplayHomeAsUpEnabled(true)
@@ -32,11 +32,18 @@ class MyProfileActivity : BaseActivity() {
         }
         findViewById<Toolbar>(R.id.toolbar_my_profile_activity).setNavigationOnClickListener{
             onBackPressed()
+            //Set a listener to respond to navigation events.
+            //This listener will be called whenever the user clicks the navigation button at the start of the toolbar. An icon must be set for the navigation button to appear.
         }
     }
 
     fun setUserDataInUI(user:User)
     {
+        /*
+            Glide is a fast and efficient open source media management and image loading framework for
+            Android that wraps media decoding, memory and disk caching, and resource pooling into a
+            simple and easy to use interface.
+        */
         Glide
             .with(this)
             .load(user.image)
