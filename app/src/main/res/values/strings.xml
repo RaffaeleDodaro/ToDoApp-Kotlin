@@ -25,4 +25,13 @@
     <string name="update">Aggiorna</string>
     <string name="my_profile_title">Il mio profilo</string>
     <!--END il mio profilo-->
+
+    <!--START create board-->
+    <string name="create_board_title">Crea una board</string>
+    <string name="board_name">Nome della board</string>
+    <string name="create">Crea</string>
+    <!--END create board-->
+
+    <string name="no_boards_are_available"> Non ci sono bacheche disponibili</string>
+
 </resources>

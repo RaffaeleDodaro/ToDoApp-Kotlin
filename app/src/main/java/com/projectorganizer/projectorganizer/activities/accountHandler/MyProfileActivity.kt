@@ -21,7 +21,7 @@ class MyProfileActivity : BaseActivity() {
 
     private fun setupActionBar()
     {
-        val toolbar = findViewById<Toolbar>(R.id.toolbar_main_activity)
+        val toolbar = findViewById<Toolbar>(R.id.toolbar_my_profile_activity)
         setSupportActionBar(toolbar)
         val actionBar=supportActionBar // Retrieve a reference to this activity's ActionBar
         if(actionBar!=null)

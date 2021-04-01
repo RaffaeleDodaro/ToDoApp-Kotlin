@@ -2,9 +2,12 @@ package com.projectorganizer.projectorganizer.firebase
 
 import android.app.Activity
 import android.util.Log
+import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
+import com.projectorganizer.projectorganizer.activities.Board
+import com.projectorganizer.projectorganizer.activities.CreateBoardActivity
 import com.projectorganizer.projectorganizer.activities.MainActivity
 import com.projectorganizer.projectorganizer.activities.accountHandler.LoginActivity
 import com.projectorganizer.projectorganizer.activities.accountHandler.MyProfileActivity
@@ -65,5 +68,22 @@ class FirestoreClass {
             currentUserId=currentUser.uid //Returns a string used to uniquely identify your user in your Firebase project's user database
         }
         return currentUserId
+    }
+
+    fun createBoard(createBoardActivity: CreateBoardActivity, board: Board) {
+        mFireStore.collection(Constants.BOARDS).document().set(board, SetOptions.merge())
+
+            .addOnSuccessListener {
+                Log.e(createBoardActivity.javaClass.simpleName,"Board creata correttamente!")
+                Toast.makeText(createBoardActivity,"Board creata correttamente!",Toast.LENGTH_SHORT).show()
+                createBoardActivity.boardCreatedSuccessfully()
+            }.addOnFailureListener{
+                    e->
+                    createBoardActivity.hideProgressDialog()
+                    Log.e(
+                            createBoardActivity.javaClass.simpleName,
+                            "Errore",
+                            e
+                    )}
     }
 }

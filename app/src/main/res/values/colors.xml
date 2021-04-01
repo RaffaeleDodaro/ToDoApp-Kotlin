@@ -18,4 +18,6 @@
     <color name="design_default_color_primary">#0CF136</color>
     <color name="design_default_color_primary_variant">#104D0C</color>
     <color name="design_default_color_on_primary">#1F7D15</color>
+    <color name="divider_color">#EAEAEA</color>
+
 </resources>

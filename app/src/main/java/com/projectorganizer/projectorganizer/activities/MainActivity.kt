@@ -11,6 +11,7 @@ import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import com.bumptech.glide.Glide
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.projectorganizer.projectorganizer.R
@@ -25,6 +26,11 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         setupActionBar()
         findViewById<NavigationView>(R.id.nav_view).setNavigationItemSelectedListener(this) //Set a listener that will be notified when a menu item is selected.
         FirestoreClass().loadUserData(this)
+
+        val fab=findViewById<FloatingActionButton>(R.id.fab_create_board)
+        fab.setOnClickListener{
+            startActivity(Intent(this,CreateBoardActivity::class.java)) //appbarmain.xml
+        }
     }
 
     private fun setupActionBar()
@@ -76,7 +82,6 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
                 startActivity(intent)
                 finish()
             }
-
         }
         findViewById<DrawerLayout>(R.id.drawer_layout).closeDrawer(GravityCompat.START)
         return true
