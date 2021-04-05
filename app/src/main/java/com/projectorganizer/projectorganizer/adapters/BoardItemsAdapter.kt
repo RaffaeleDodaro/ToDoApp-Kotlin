@@ -1,17 +1,14 @@
 package com.projectorganizer.projectorganizer.adapters
 
 import android.content.Context
-import android.content.DialogInterface
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.projectorganizer.projectorganizer.R
-import com.projectorganizer.projectorganizer.activities.Board
-import de.hdodenhof.circleimageview.CircleImageView
+import com.projectorganizer.projectorganizer.models.Board
 
 open class BoardItemsAdapter(private val context:Context,
                              private var list:ArrayList<Board>):

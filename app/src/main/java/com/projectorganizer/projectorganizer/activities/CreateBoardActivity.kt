@@ -1,12 +1,13 @@
 package com.projectorganizer.projectorganizer.activities
 
-import androidx.appcompat.app.AppCompatActivity
+import android.app.Activity
 import android.os.Bundle
 import android.widget.Button
 import androidx.appcompat.widget.AppCompatEditText
 import androidx.appcompat.widget.Toolbar
 import com.projectorganizer.projectorganizer.R
 import com.projectorganizer.projectorganizer.firebase.FirestoreClass
+import com.projectorganizer.projectorganizer.models.Board
 import com.projectorganizer.projectorganizer.utils.Constants
 
 class CreateBoardActivity : BaseActivity() {
@@ -19,10 +20,12 @@ class CreateBoardActivity : BaseActivity() {
         setContentView(R.layout.activity_createboard)
         setupActionBar()
 
+        if(intent.hasExtra(Constants.NAME))
+            userName = intent.getStringExtra(Constants.NAME).toString()
 
-            userName = ""
 
         findViewById<Button>(R.id.btn_create).setOnClickListener {
+            showProgressDialog(resources.getString(R.string.please_wait))
             createBoard()
         }
     }
@@ -49,7 +52,7 @@ class CreateBoardActivity : BaseActivity() {
     {
         val assignedUsersArrayList: ArrayList<String> = ArrayList()
         assignedUsersArrayList.add(FirestoreClass().getCurrentUserId())
-        var board=Board(findViewById<AppCompatEditText>(R.id.et_board_name).text.toString(),
+        var board= Board(findViewById<AppCompatEditText>(R.id.et_board_name).text.toString(),
         "",userName,assignedUsersArrayList)
         FirestoreClass().createBoard(this,board)
     }
@@ -57,6 +60,7 @@ class CreateBoardActivity : BaseActivity() {
     fun boardCreatedSuccessfully()
     {
         hideProgressDialog()
+        setResult(Activity.RESULT_OK)
         finish()
     }
 
