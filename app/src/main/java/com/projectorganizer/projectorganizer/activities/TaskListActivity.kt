@@ -13,6 +13,9 @@ import com.projectorganizer.projectorganizer.models.Task
 import com.projectorganizer.projectorganizer.utils.Constants
 
 class TaskListActivity : BaseActivity() {
+    
+    private lateinit var boardDetails:Board
+    
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_task_list)
@@ -24,7 +27,8 @@ class TaskListActivity : BaseActivity() {
         showProgressDialog(resources.getString(R.string.please_wait))
         FirestoreClass().getBoardDetails(this,boardDocumentId)
     }
-    private fun setupActionBar(title:String)
+
+    private fun setupActionBar()
     {
         val toolbar = findViewById<Toolbar>(R.id.toolbar_task_list_activity)
         setSupportActionBar(toolbar)
@@ -33,7 +37,7 @@ class TaskListActivity : BaseActivity() {
         {
             actionBar.setDisplayHomeAsUpEnabled(true)
             actionBar.setHomeAsUpIndicator(R.drawable.ic_white_color_back_24dp)
-            actionBar.title=title
+            actionBar.title=boardDetails.name
         }
         findViewById<Toolbar>(R.id.toolbar_task_list_activity).setNavigationOnClickListener{
             onBackPressed()
@@ -44,8 +48,10 @@ class TaskListActivity : BaseActivity() {
 
     fun boardDetails(board:Board)
     {
+        boardDetails=board
+
         hideProgressDialog()
-        setupActionBar(board.name)
+        setupActionBar()
         val addTaskList= Task(resources.getString(R.string.add_list))
         board.taskList.add(addTaskList)
 
@@ -57,4 +63,38 @@ class TaskListActivity : BaseActivity() {
         
         rv.adapter=adapter
     }
+
+    fun addUpdateTaskListSuccess()
+    {
+        hideProgressDialog()
+        showProgressDialog(resources.getString(R.string.please_wait))
+        FirestoreClass().getBoardDetails(this,boardDetails.documentId)
+    }
+
+    fun createTaskList(taskListName:String)
+    {
+        val task=Task(taskListName,FirestoreClass().getCurrentUserId())
+        boardDetails.taskList.add(0,task)
+        boardDetails.taskList.removeAt(boardDetails.taskList.size-1)
+        showProgressDialog(resources.getString(R.string.please_wait))
+        FirestoreClass().addUpdateTaskList(this,boardDetails)
+    }
+
+    fun updateTaskList(position:Int,listName:String,model:Task)
+    {
+        val task=Task(listName,model.createdBy)
+        boardDetails.taskList[position]=task
+        boardDetails.taskList.removeAt(boardDetails.taskList.size-1)
+        showProgressDialog(resources.getString(R.string.please_wait))
+        FirestoreClass().addUpdateTaskList(this,boardDetails)
+    }
+
+    fun deleteTaskList(position: Int)
+    {
+        boardDetails.taskList.removeAt(position)
+        boardDetails.taskList.removeAt(boardDetails.taskList.size-1)
+        showProgressDialog(resources.getString(R.string.please_wait))
+        FirestoreClass().addUpdateTaskList(this,boardDetails)
+    }
+
 }

@@ -1,14 +1,16 @@
 package com.projectorganizer.projectorganizer.adapters
 
+import android.app.AlertDialog
 import android.content.Context
 import android.content.res.Resources
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
-import android.widget.TextView
+import android.widget.*
+import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.projectorganizer.projectorganizer.R
+import com.projectorganizer.projectorganizer.activities.TaskListActivity
 import com.projectorganizer.projectorganizer.models.Task
 
 open class TaskListItemAdapter(
@@ -42,7 +44,82 @@ open class TaskListItemAdapter(
                 holder.itemView.findViewById<LinearLayout>(R.id.ll_task_item).visibility=View.VISIBLE
             
             }
+            holder.itemView.findViewById<TextView>(R.id.tv_task_list_title).text=model.title
+            holder.itemView.findViewById<TextView>(R.id.tv_add_task_list).setOnClickListener{
+                holder.itemView.findViewById<TextView>(R.id.tv_add_task_list).visibility= View.GONE
+                holder.itemView.findViewById<CardView>(R.id.cv_add_task_list_name).visibility=View.VISIBLE
+
+            }
+
+            holder.itemView.findViewById<ImageButton>(R.id.ib_close_card_name).setOnClickListener{
+                holder.itemView.findViewById<TextView>(R.id.tv_add_task_list).visibility= View.VISIBLE
+                holder.itemView.findViewById<CardView>(R.id.cv_add_task_list_name).visibility=View.GONE
+            }
+
+            holder.itemView.findViewById<ImageButton>(R.id.ib_done_list_name).setOnClickListener{
+                val listName=holder.itemView.findViewById<EditText>(R.id.et_task_list_name).text.toString()
+                if(listName.isNotEmpty())
+                    if(context is TaskListActivity)
+                        context.createTaskList(listName)
+                else
+                    Toast.makeText(context,"Inserisci il nome della lista",
+                            Toast.LENGTH_SHORT).show()
+            }
         }
+        holder.itemView.findViewById<ImageButton>(R.id.ib_edit_list_name).setOnClickListener{
+            holder.itemView.findViewById<EditText>(R.id.et_edit_task_list_name).setText(model.title)
+            holder.itemView.findViewById<LinearLayout>(R.id.ll_title_view).visibility=View.GONE
+            holder.itemView.findViewById<CardView>(R.id.cv_edit_task_list_name).visibility=View.VISIBLE
+        }
+
+        holder.itemView.findViewById<ImageButton>(R.id.ib_close_editable_view).setOnClickListener{
+            holder.itemView.findViewById<LinearLayout>(R.id.ll_title_view).visibility= View.VISIBLE
+            holder.itemView.findViewById<CardView>(R.id.cv_edit_task_list_name).visibility=View.GONE
+        }
+
+        holder.itemView.findViewById<ImageButton>(R.id.ib_done_edit_list_name).setOnClickListener{
+            val listName=holder.itemView.findViewById<EditText>(R.id.et_edit_task_list_name).text.toString()
+            if(listName.isNotEmpty())
+                if(context is TaskListActivity)
+                    context.updateTaskList(position, listName, model)
+                else
+                    Toast.makeText(context,"Inserisci il nome della lista",
+                            Toast.LENGTH_SHORT).show()
+        }
+
+        holder.itemView.findViewById<ImageButton>(R.id.ib_delete_list).setOnClickListener{
+            alertDialogForDeleteList(position,model.title)
+        }
+    }
+
+    /**
+     * Method is used to show the Alert Dialog for deleting the task list.
+     */
+    private fun alertDialogForDeleteList(position: Int, title: String) {
+        val builder = AlertDialog.Builder(context)
+        //set title for alert dialog
+        builder.setTitle("Attenzione")
+        //set message for alert dialog
+        builder.setMessage("Sei sicuro di voler cancellare $title?")
+        builder.setIcon(android.R.drawable.ic_dialog_alert)
+        //performing positive action
+        builder.setPositiveButton("Si") { dialogInterface, which ->
+            dialogInterface.dismiss() // Dialog will be dismissed
+
+            if (context is TaskListActivity) {
+                context.deleteTaskList(position)
+            }
+        }
+
+        //performing negative action
+        builder.setNegativeButton("No") { dialogInterface, which ->
+            dialogInterface.dismiss() // Dialog will be dismissed
+        }
+        // Create the AlertDialog
+        val alertDialog: AlertDialog = builder.create()
+        // Set other dialog properties
+        alertDialog.setCancelable(false) // Will not allow user to cancel after clicking on remaining screen area.
+        alertDialog.show()  // show the dialog to UI
     }
 
     override fun getItemCount(): Int {
