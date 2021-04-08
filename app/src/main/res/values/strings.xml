@@ -36,7 +36,9 @@
 
     <string name="action_add_list">Aggiungi lista</string>
     <string name="hint_list_name">Nome lista</string>
-    <string name="action_add_card">Add Card</string>
-    <string name="hint_card_name">Card Name</string>
+    <string name="action_add_card">Aggiungi carta</string>
+    <string name="hint_card_name">Nome carta</string>
     <string name="add_list">Aggiungi lista</string>
+
+    <string name="delete_card">Cancella carta</string>
 </resources>

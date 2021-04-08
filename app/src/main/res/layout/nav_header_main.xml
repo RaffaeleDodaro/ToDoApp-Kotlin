@@ -31,6 +31,8 @@
         android:textSize="@dimen/nav_user_name_text_size"
         tools:text="Username" />
 
+
+
     <View
         android:layout_width="match_parent"
         android:layout_height="@dimen/nav_divider_height"

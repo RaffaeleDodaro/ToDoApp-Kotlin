@@ -76,9 +76,10 @@ class LoginActivity : BaseActivity() {
                 } else {
                     Toast.makeText(
                         this,
-                        task.exception!!.message, // !! vuol dire che task NON deve essere nullo
+                        "Email/password non corretti", // !! vuol dire che task NON deve essere nullo
                         Toast.LENGTH_LONG
                     ).show()
+                    hideProgressDialog()
                 }
             }
     }

@@ -1,7 +1,10 @@
 package com.projectorganizer.projectorganizer.activities
 
+import android.app.Activity
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -9,8 +12,10 @@ import com.projectorganizer.projectorganizer.R
 import com.projectorganizer.projectorganizer.adapters.TaskListItemAdapter
 import com.projectorganizer.projectorganizer.firebase.FirestoreClass
 import com.projectorganizer.projectorganizer.models.Board
+import com.projectorganizer.projectorganizer.models.Card
 import com.projectorganizer.projectorganizer.models.Task
 import com.projectorganizer.projectorganizer.utils.Constants
+import java.text.FieldPosition
 
 class TaskListActivity : BaseActivity() {
     
@@ -89,6 +94,19 @@ class TaskListActivity : BaseActivity() {
         FirestoreClass().addUpdateTaskList(this,boardDetails)
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == Activity.RESULT_OK
+            && requestCode == CARD_DETAILS_REQUEST_CODE) {
+            showProgressDialog(resources.getString(R.string.please_wait))
+            FirestoreClass().getBoardDetails(this, boardDetails.documentId)
+        }
+        // END
+        else {
+            Log.e("Error", "Error")
+        }
+    }
+
     fun deleteTaskList(position: Int)
     {
         boardDetails.taskList.removeAt(position)
@@ -97,4 +115,37 @@ class TaskListActivity : BaseActivity() {
         FirestoreClass().addUpdateTaskList(this,boardDetails)
     }
 
+    fun addCardToTaskList(position: Int,cardName:String)
+    {
+        boardDetails.taskList.removeAt(boardDetails.taskList.size-1)
+
+        val cardAssignedUsersList:ArrayList<String> = ArrayList()
+        cardAssignedUsersList.add(FirestoreClass().getCurrentUserId())
+        val card= Card(cardName,FirestoreClass().getCurrentUserId(), cardAssignedUsersList)
+        val cardsList=boardDetails.taskList[position].cards
+        cardsList.add(card)
+
+        val task=Task(
+                boardDetails.taskList[position].title,
+                boardDetails.taskList[position].createdBy,
+                cardsList
+        )
+        boardDetails.taskList[position]=task
+        showProgressDialog(resources.getString(R.string.please_wait))
+        FirestoreClass().addUpdateTaskList(this,boardDetails)
+
+    }
+
+    fun cardDetails(taskListPosition: Int,cardPosition: Int)
+    {
+        val intent=Intent(this,CardDetailsActivity::class.java)
+        intent.putExtra(Constants.BOARD_DETAIL, boardDetails)
+        intent.putExtra(Constants.TASK_LIST_ITEM_POSITION,taskListPosition)
+        intent.putExtra(Constants.CARD_LIST_ITEM_POSITION,cardPosition)
+        startActivity(intent)
+        startActivityForResult(intent, CARD_DETAILS_REQUEST_CODE)
+    }
+    companion object{
+        const val CARD_DETAILS_REQUEST_CODE:Int=14
+    }
 }

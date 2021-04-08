@@ -10,10 +10,13 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.ProjectOrganizer">
         <activity
-            android:name=".activities.TaskListActivity"
+            android:name=".activities.CardDetailsActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"/>
-
+        <activity
+            android:name=".activities.TaskListActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".activities.CreateBoardActivity"
             android:screenOrientation="portrait"
