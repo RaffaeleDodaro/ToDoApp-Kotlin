@@ -18,14 +18,15 @@ import com.projectorganizer.projectorganizer.utils.Constants
 import java.text.FieldPosition
 
 class TaskListActivity : BaseActivity() {
-    
+
+    //variabili globali che vengono inizializzate piu' tardi
     private lateinit var boardDetails:Board
-    
+    private lateinit var boardDocumentId:String
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_task_list)
 
-        var boardDocumentId=""
         if(intent.hasExtra(Constants.DOCUMENT_ID))
             boardDocumentId = intent.getStringExtra(Constants.DOCUMENT_ID)!!
 
@@ -57,6 +58,8 @@ class TaskListActivity : BaseActivity() {
 
         hideProgressDialog()
         setupActionBar()
+
+        // Here we are appending an item view for adding a list task list for the board.
         val addTaskList= Task(resources.getString(R.string.add_list))
         board.taskList.add(addTaskList)
 
@@ -64,16 +67,20 @@ class TaskListActivity : BaseActivity() {
 
         rv.layoutManager=LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL,false)
         rv.setHasFixedSize(true)
+
+        // Create an instance of TaskListItemsAdapter and pass the task list to it.
         val adapter= TaskListItemAdapter(this,board.taskList)
-        
-        rv.adapter=adapter
+        rv.adapter=adapter// Attach the adapter to the recyclerView.
     }
 
-    fun addUpdateTaskListSuccess()
-    {
+    /**
+     * mi serve per aggiornare o aggiungere alementi alla task list
+     */
+    fun addUpdateTaskListSuccess() {
         hideProgressDialog()
+
         showProgressDialog(resources.getString(R.string.please_wait))
-        FirestoreClass().getBoardDetails(this,boardDetails.documentId)
+        FirestoreClass().getBoardDetails(this@TaskListActivity, boardDetails.documentId)
     }
 
     fun createTaskList(taskListName:String)
@@ -99,7 +106,7 @@ class TaskListActivity : BaseActivity() {
         if (resultCode == Activity.RESULT_OK
             && requestCode == CARD_DETAILS_REQUEST_CODE) {
             showProgressDialog(resources.getString(R.string.please_wait))
-            FirestoreClass().getBoardDetails(this, boardDetails.documentId)
+            FirestoreClass().getBoardDetails(this, boardDocumentId)
         }
         // END
         else {
@@ -121,7 +128,9 @@ class TaskListActivity : BaseActivity() {
 
         val cardAssignedUsersList:ArrayList<String> = ArrayList()
         cardAssignedUsersList.add(FirestoreClass().getCurrentUserId())
-        val card= Card(cardName,FirestoreClass().getCurrentUserId(), cardAssignedUsersList)
+        val card= Card(cardName,FirestoreClass().getCurrentUserId(),
+                cardAssignedUsersList)
+
         val cardsList=boardDetails.taskList[position].cards
         cardsList.add(card)
 
@@ -132,19 +141,19 @@ class TaskListActivity : BaseActivity() {
         )
         boardDetails.taskList[position]=task
         showProgressDialog(resources.getString(R.string.please_wait))
-        FirestoreClass().addUpdateTaskList(this,boardDetails)
+        FirestoreClass().addUpdateTaskList(this@TaskListActivity,boardDetails)
 
     }
 
     fun cardDetails(taskListPosition: Int,cardPosition: Int)
     {
-        val intent=Intent(this,CardDetailsActivity::class.java)
+        val intent=Intent(this@TaskListActivity,CardDetailsActivity::class.java)
         intent.putExtra(Constants.BOARD_DETAIL, boardDetails)
         intent.putExtra(Constants.TASK_LIST_ITEM_POSITION,taskListPosition)
         intent.putExtra(Constants.CARD_LIST_ITEM_POSITION,cardPosition)
-        startActivity(intent)
         startActivityForResult(intent, CARD_DETAILS_REQUEST_CODE)
     }
+
     companion object{
         const val CARD_DETAILS_REQUEST_CODE:Int=14
     }

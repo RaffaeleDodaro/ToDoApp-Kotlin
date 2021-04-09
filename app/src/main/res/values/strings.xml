@@ -41,4 +41,9 @@
     <string name="add_list">Aggiungi lista</string>
 
     <string name="delete_card">Cancella carta</string>
+
+    <string name="confirmation_message_to_delete_card">Sei sicuro di voler eliminare \'%1$s\'?</string>
+    <string name="alert">Attenzione!</string>
+    <string name="yes">Si</string>
+    <string name="no">No</string>
 </resources>
