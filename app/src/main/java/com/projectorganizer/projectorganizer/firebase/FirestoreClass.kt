@@ -35,18 +35,25 @@ class FirestoreClass {
     {
         mFireStore.collection(Constants.USERS).document(getCurrentUserId()).get().addOnSuccessListener {document ->
             Log.e(activity.javaClass.simpleName, document.toString())
-            var loggedInUser=document.toObject(User::class.java)!!
-            when(activity){
-                is LoginActivity ->{
-                    activity.signInSuccess(loggedInUser)
-                }
-                is MainActivity -> {
-                    activity.updateNavigationUserDetails(loggedInUser,readBoardList)
-                }
-                is MyProfileActivity -> {
-                    activity.setUserDataInUI(loggedInUser)
+            var loggedInUser=document.toObject(User::class.java)
+            if(loggedInUser !=null){
+                when(activity){
+                    is LoginActivity ->{
+                        activity.signInSuccess(loggedInUser)
+                    }
+                    is MainActivity -> {
+                        activity.updateNavigationUserDetails(loggedInUser,readBoardList)
+                    }
+                    is MyProfileActivity -> {
+                        activity.setUserDataInUI(loggedInUser)
+                    }
                 }
             }
+            else
+            {
+
+            }
+
         }.addOnFailureListener{
 
                 e->// e rappresenta exception

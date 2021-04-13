@@ -113,25 +113,42 @@
                 </com.google.android.material.textfield.TextInputLayout>
 
                     <Button
-                        android:background="@drawable/shape_button_rounded"
-                        android:layout_height="wrap_content"
-                        android:layout_width="match_parent"
                         android:id="@+id/btn_sign_up"
-                        android:textSize="@dimen/btn_text_size"
-                        android:textColor="@android:color/white"
-                        android:text="@string/sign_up"
-                        android:gravity="center"
-                        android:layout_marginTop="@dimen/sign_up_screen_btn_marginTop"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
                         android:layout_gravity="center"
-                        android:layout_marginEnd="@dimen/btn_marginStartEnd"
                         android:layout_marginStart="@dimen/btn_marginStartEnd"
-                        android:paddingBottom="@dimen/btn_paddingTopBottom"
+                        android:layout_marginTop="@dimen/sign_up_screen_btn_marginTop"
+                        android:layout_marginEnd="@dimen/btn_marginStartEnd"
+                        android:background="@drawable/shape_button_rounded"
+                        android:foreground="?attr/selectableItemBackground"
+                        android:gravity="center"
                         android:paddingTop="@dimen/btn_paddingTopBottom"
-                        android:foreground="?attr/selectableItemBackground"/>
+                        android:paddingBottom="@dimen/btn_paddingTopBottom"
+                        android:text="@string/sign_up"
+                        android:textColor="@android:color/white"
+                        android:textSize="@dimen/btn_text_size" />
 
                 </LinearLayout>
 
         </androidx.cardview.widget.CardView>
+
+        <Button
+            android:id="@+id/btn_sign_upGoogle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginStart="@dimen/btn_marginStartEnd"
+            android:layout_marginTop="@dimen/sign_up_screen_btn_marginTop"
+            android:layout_marginEnd="@dimen/btn_marginStartEnd"
+            android:background="@drawable/shape_button_rounded"
+            android:foreground="?attr/selectableItemBackground"
+            android:gravity="center"
+            android:paddingTop="@dimen/btn_paddingTopBottom"
+            android:paddingBottom="@dimen/btn_paddingTopBottom"
+            android:text='"GOOGLE"'
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/btn_text_size" />
 
     </LinearLayout>
 

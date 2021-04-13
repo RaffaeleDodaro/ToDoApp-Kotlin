@@ -8,6 +8,8 @@ import android.view.WindowInsets
 import android.view.WindowManager
 import android.widget.Button
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import com.projectorganizer.projectorganizer.R
 import com.projectorganizer.projectorganizer.activities.accountHandler.LoginActivity
 import com.projectorganizer.projectorganizer.activities.accountHandler.SignUpActivity
@@ -23,7 +25,7 @@ class IntroActivity : BaseActivity() {
 
         auth = FirebaseAuth.getInstance()
         val user=auth.currentUser // verifico se l'utente in precedenza aveva gia' fatto l'accesso
-
+        val currentUser = Firebase.auth.currentUser
 
         //nascondo la statusbar
         @Suppress("DEPRECATION")
@@ -36,7 +38,7 @@ class IntroActivity : BaseActivity() {
             )
         }
 
-        if(user !=null) {
+        if(user !=null || currentUser!=null) {
 
             val dashboardIntent = Intent(this, MainActivity::class.java)  // permette di attivare ogni componente di una applicazione,
                                                                                         // quindi anche una Activity, ma in generale di trasmettere
