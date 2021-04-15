@@ -86,7 +86,6 @@ class CardDetailsActivity : BaseActivity() {
         val card = Card(
                 findViewById<EditText>(R.id.et_name_card_details).text.toString(),
                 boardDetail.taskList[taskListPosition].cards[cardPosition].createdBy,
-                boardDetail.taskList[taskListPosition].cards[cardPosition].assignedTo
         )
 
         // Here we have assigned the update card details to the task list using the card position.

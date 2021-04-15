@@ -1,7 +1,5 @@
 package com.projectorganizer.projectorganizer.activities.accountHandler
 
-import android.R.id.message
-import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
@@ -16,6 +14,7 @@ import androidx.appcompat.widget.Toolbar
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.SignInButton
 import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -38,6 +37,11 @@ class SignUpActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_sign_up)
 
+
+        val signInButton = findViewById<SignInButton>(R.id.btn_sign_upGoogle)
+        signInButton.setSize(SignInButton.SIZE_STANDARD)
+
+
         //nascondo la statusbar
         @Suppress("DEPRECATION")
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
@@ -50,6 +54,7 @@ class SignUpActivity : BaseActivity() {
                     // This allows the window to use the entire display space for itself
             )
         }
+
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestIdToken(getString(R.string.default_web_client_id))
             .requestEmail()
@@ -58,14 +63,13 @@ class SignUpActivity : BaseActivity() {
 
 
         setupActionBar()
-        findViewById<Button>(R.id.btn_sign_upGoogle).setOnClickListener {
 
+
+        findViewById<SignInButton>(R.id.btn_sign_upGoogle).setOnClickListener {
             signInWithGoogle()
         }
         auth = Firebase.auth
     }
-
-
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -76,12 +80,13 @@ class SignUpActivity : BaseActivity() {
             try {
                 // Google Sign In was successful, authenticate with Firebase
                 val account = task.getResult(ApiException::class.java)!!
-                Log.d(TAG, "firebaseAuthWithGoogle: " + account.id)
-                firebaseAuthWithGoogle(account.idToken!!)
-
+                //if(!userExist(account.email!!)){
+                    Log.d(TAG, "firebaseRegisterWithGoogle: " + account.id)
+                    firebaseAuthWithGoogle(account.idToken!!)
+                //}
             } catch (e: ApiException) {
                 // Google Sign In failed, update UI appropriately
-                Log.w(TAG, "Google sign in failed", e)
+                Log.w(TAG, "Google sign up failed", e)
             }
         }
     }
@@ -100,7 +105,7 @@ class SignUpActivity : BaseActivity() {
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
                     // Sign in success, update UI with the signed-in user's information
-                    Log.d(TAG, "signInWithCredential:success")
+                    Log.d(TAG, "signUpWithCredential:success")
                     val user = auth.currentUser
                     showProgressDialog(getString(R.string.please_wait))
 
@@ -111,7 +116,7 @@ class SignUpActivity : BaseActivity() {
                     updateUI(user)
                 } else {
                     // If sign in fails, display a message to the user.
-                    Log.w(TAG, "signInWithCredential:failure", task.exception)
+                    Log.w(TAG, "signUpWithCredential:failure", task.exception)
                     updateUI(null)
                 }
             }
@@ -120,7 +125,7 @@ class SignUpActivity : BaseActivity() {
     private fun signInWithGoogle() {
         val signInIntent = mGoogleSignInClient.signInIntent
         startActivityForResult(
-            signInIntent, RC_SIGN_IN
+                signInIntent, RC_SIGN_IN
         )
     }
 
@@ -143,15 +148,8 @@ class SignUpActivity : BaseActivity() {
     {
         Toast.makeText(this, "Ti sei registrato correttamente", Toast.LENGTH_LONG).show()
         hideProgressDialog()
-        //sendEmail(this)
-        //FirebaseAuth.getInstance().signOut() //faccio il signout e obbligo l'utente ad accedere al nuovo account
         finish()
     }
-
-    /*fun sendEmail(context: Context) {
-
-    }
-*/
     private fun validateForm(name: String, email: String, password: String):Boolean
     {
         //when equivale allo switch
@@ -173,7 +171,6 @@ class SignUpActivity : BaseActivity() {
             }
         }
     }
-    private var emailProva:String=""
     private fun registerUser()
     {
         val name:String = findViewById<TextView>(R.id.et_name).text.toString().trim() //trim ritorna una stringa senza spazi
@@ -187,7 +184,7 @@ class SignUpActivity : BaseActivity() {
                     val firebaseUser: FirebaseUser = task.result!!.user!! // !! lancia un'eccezione se result o user sono nulli
                     val registeredEmail = firebaseUser.email!!
                     val user = User(firebaseUser.uid, name, registeredEmail) // uid Returns a string used to uniquely identify your user in your Firebase project's
-                    //emailProva=email
+
                     FirestoreClass().registerUser(this, user)
                 } else {
                     Toast.makeText(this, "Registrazione non riuscita", Toast.LENGTH_SHORT).show()

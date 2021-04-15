@@ -2,6 +2,7 @@ package com.projectorganizer.projectorganizer.activities
 
 import android.app.Activity
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
@@ -24,6 +25,10 @@ import com.projectorganizer.projectorganizer.firebase.FirestoreClass
 import com.projectorganizer.projectorganizer.models.Board
 import com.projectorganizer.projectorganizer.models.User
 import com.projectorganizer.projectorganizer.utils.Constants
+import java.io.File
+import java.io.FileInputStream
+import java.nio.file.Files.exists
+import java.util.jar.Manifest
 
 class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedListener {
 
@@ -38,6 +43,8 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
 
         //A code for starting the create board activity for result
         const val CREATE_BOARD_REQUEST_CODE:Int=12
+
+        const val IMPORT_FILE=111
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -151,10 +158,21 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
                 startActivity(intent)
                 finish()
             }
+
+            R.id.nav_import ->{//se e' stato premuto il per importa una todo list
+
+                val intent = Intent()
+                    .setType("*/*")
+                    .setAction(Intent.ACTION_GET_CONTENT)
+
+                startActivityForResult(Intent.createChooser(intent, "Select a file"), IMPORT_FILE)
+
+            }
         }
         findViewById<DrawerLayout>(R.id.drawer_layout).closeDrawer(GravityCompat.START)
         return true
     }
+
 
     fun updateNavigationUserDetails(user: User, readBoardList:Boolean)
     {
@@ -189,6 +207,18 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
             FirestoreClass().getBoardsList(this)
         else
             Log.e("Error","Error")
+
+        if(requestCode== IMPORT_FILE && resultCode== RESULT_OK)
+        {
+            val filePath = data?.data?.path
+            //val filePath = data?.data?.toString()
+            println(filePath)
+        }
+    }
+
+    private fun openFile(path:Uri?)
+    {
+
     }
 
 }

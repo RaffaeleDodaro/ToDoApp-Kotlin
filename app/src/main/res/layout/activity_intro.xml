@@ -33,18 +33,6 @@
         android:textColor="@color/primary_text_color"
         android:textSize="@dimen/lets_get_started_text_size" />
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/intro_text_marginStartEnd"
-        android:layout_marginTop="@dimen/intro_text_marginTop"
-        android:layout_marginEnd="@dimen/intro_text_marginStartEnd"
-        android:gravity="center"
-        android:lineSpacingExtra="@dimen/intro_text_line_spacing_extra"
-        android:text="@string/intro_text_description"
-        android:textColor="@color/secondary_text_color"
-        android:textSize="@dimen/intro_text_size" />
-
     <Button
         android:id="@+id/btn_sign_in_intro"
         android:layout_width="match_parent"

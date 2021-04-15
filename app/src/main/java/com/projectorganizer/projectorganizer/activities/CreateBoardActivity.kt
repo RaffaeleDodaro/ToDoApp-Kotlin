@@ -62,7 +62,7 @@ class CreateBoardActivity : BaseActivity() {
         val assignedUsersArrayList: ArrayList<String> = ArrayList()
         assignedUsersArrayList.add(FirestoreClass().getCurrentUserId())
         var board= Board(findViewById<AppCompatEditText>(R.id.et_board_name).text.toString(),
-                randomElement(),userName,assignedUsersArrayList)
+                randomElement(),userName)
         FirestoreClass().createBoard(this,board)
     }
 

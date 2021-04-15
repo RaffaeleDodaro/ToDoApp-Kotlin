@@ -122,6 +122,18 @@
                     android:paddingTop="@dimen/btn_paddingTopBottom"
                     android:foreground="?attr/selectableItemBackground"/>
 
+
+                <com.google.android.gms.common.SignInButton
+                    android:id="@+id/btn_sign_inGoogle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginStart="@dimen/btn_marginStartEnd"
+                    android:layout_marginTop="@dimen/sign_up_screen_btn_marginTop"
+                    android:layout_marginEnd="@dimen/btn_marginStartEnd"
+                    android:gravity="center"
+                    android:textSize="@dimen/btn_text_size"
+                    />
             </LinearLayout>
 
         </androidx.cardview.widget.CardView>

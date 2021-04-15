@@ -5,6 +5,8 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.widget.Button
+import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -15,6 +17,7 @@ import com.projectorganizer.projectorganizer.models.Board
 import com.projectorganizer.projectorganizer.models.Card
 import com.projectorganizer.projectorganizer.models.Task
 import com.projectorganizer.projectorganizer.utils.Constants
+import java.io.File
 import java.text.FieldPosition
 
 class TaskListActivity : BaseActivity() {
@@ -43,6 +46,7 @@ class TaskListActivity : BaseActivity() {
         {
             actionBar.setDisplayHomeAsUpEnabled(true)
             actionBar.setHomeAsUpIndicator(R.drawable.ic_white_color_back_24dp)
+
             actionBar.title=boardDetails.name
         }
         findViewById<Toolbar>(R.id.toolbar_task_list_activity).setNavigationOnClickListener{
@@ -50,6 +54,40 @@ class TaskListActivity : BaseActivity() {
             //Set a listener to respond to navigation events.
             //This listener will be called whenever the user clicks the navigation button at the start of the toolbar. An icon must be set for the navigation button to appear.
         }
+        findViewById<Button>(R.id.btn_export).setOnClickListener {
+            exportData()
+        }
+    }
+
+    private fun exportData()
+    {
+        val path = this.getExternalFilesDir(null)
+
+        val folder = File(path, "Exported")
+        folder.mkdirs()
+
+        if(File(folder, boardDetails.name+".txt").exists())
+            File(folder, boardDetails.name+".txt").delete()
+
+        val file = File(folder, boardDetails.name+".txt")
+
+        file.appendText("Nome della lista: " + boardDetails.name+"\n")
+        file.appendText("Nome della lista: " + boardDetails.image+"\n")
+        file.appendText("Creato da: " + boardDetails.createdBy+"\n")
+        var i=0
+        while(i<boardDetails.taskList.size)
+        {
+            var j=0
+            while(j<boardDetails.taskList[i].cards.size)
+            {
+                file.appendText("Nome card: "+ boardDetails.taskList[i].cards[j].name+"\n")
+                j+=1
+            }
+            i+=1
+        }
+        file.appendText("\n")
+        Toast.makeText(this,"Dati esportati. Li trovi in /Android/data/com.todoapp.todoapp/files/Exported.",Toast.LENGTH_LONG).show()
+
     }
 
     fun boardDetails(board:Board)
@@ -128,8 +166,7 @@ class TaskListActivity : BaseActivity() {
 
         val cardAssignedUsersList:ArrayList<String> = ArrayList()
         cardAssignedUsersList.add(FirestoreClass().getCurrentUserId())
-        val card= Card(cardName,FirestoreClass().getCurrentUserId(),
-                cardAssignedUsersList)
+        val card= Card(cardName,FirestoreClass().getCurrentUserId())
 
         val cardsList=boardDetails.taskList[position].cards
         cardsList.add(card)
