@@ -1,9 +1,11 @@
 package com.projectorganizer.projectorganizer.activities
 
+import Board
 import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.provider.DocumentsContract
 import android.util.Log
 import android.view.MenuItem
 import android.view.View
@@ -22,11 +24,9 @@ import com.projectorganizer.projectorganizer.R
 import com.projectorganizer.projectorganizer.activities.accountHandler.MyProfileActivity
 import com.projectorganizer.projectorganizer.adapters.BoardItemsAdapter
 import com.projectorganizer.projectorganizer.firebase.FirestoreClass
-import com.projectorganizer.projectorganizer.models.Board
 import com.projectorganizer.projectorganizer.models.User
 import com.projectorganizer.projectorganizer.utils.Constants
-import java.io.File
-import java.io.FileInputStream
+import java.io.*
 import java.nio.file.Files.exists
 import java.util.jar.Manifest
 
@@ -45,6 +45,9 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         const val CREATE_BOARD_REQUEST_CODE:Int=12
 
         const val IMPORT_FILE=111
+
+
+        const val PICK_PDF_FILE = 2
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -210,15 +213,24 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
 
         if(requestCode== IMPORT_FILE && resultCode== RESULT_OK)
         {
-            val filePath = data?.data?.path
-            //val filePath = data?.data?.toString()
-            println(filePath)
+            //val filePath = data?.data?.path
+            val selectedFile = data?.data //The uri with the location of the file <p>
+            readTextFromUri(selectedFile!!)
         }
     }
-
-    private fun openFile(path:Uri?)
-    {
-
+    @Throws(IOException::class)
+    private fun readTextFromUri(uri: Uri){
+        var array = ArrayList<String>()
+        contentResolver.openInputStream(uri)?.use { inputStream ->
+            BufferedReader(InputStreamReader(inputStream)).use { reader ->
+                var line: String? = reader.readLine()
+                while (line != null) {
+                    array.add(line)
+                    line = reader.readLine()
+                }
+            }
+        }
+        FirestoreClass().importBackup(array)
     }
 
 }

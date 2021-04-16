@@ -1,5 +1,6 @@
 package com.projectorganizer.projectorganizer.adapters
 
+import Board
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
@@ -8,7 +9,6 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.projectorganizer.projectorganizer.R
-import com.projectorganizer.projectorganizer.models.Board
 
 open class BoardItemsAdapter(private val context:Context,
                              private var list:ArrayList<Board>):

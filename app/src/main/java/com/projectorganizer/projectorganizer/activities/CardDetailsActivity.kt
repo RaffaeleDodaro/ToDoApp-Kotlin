@@ -1,5 +1,6 @@
 package com.projectorganizer.projectorganizer.activities
 
+import Board
 import android.app.Activity
 import android.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -15,7 +16,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.projectorganizer.projectorganizer.R
 import com.projectorganizer.projectorganizer.adapters.TaskListItemAdapter
 import com.projectorganizer.projectorganizer.firebase.FirestoreClass
-import com.projectorganizer.projectorganizer.models.Board
 import com.projectorganizer.projectorganizer.models.Card
 import com.projectorganizer.projectorganizer.models.Task
 import com.projectorganizer.projectorganizer.utils.Constants
@@ -86,6 +86,7 @@ class CardDetailsActivity : BaseActivity() {
         val card = Card(
                 findViewById<EditText>(R.id.et_name_card_details).text.toString(),
                 boardDetail.taskList[taskListPosition].cards[cardPosition].createdBy,
+                boardDetail.taskList[taskListPosition].cards[cardPosition].assignedTo
         )
 
         // Here we have assigned the update card details to the task list using the card position.

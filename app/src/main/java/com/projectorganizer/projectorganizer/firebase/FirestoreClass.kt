@@ -1,23 +1,22 @@
 package com.projectorganizer.projectorganizer.firebase
 
+import Board
 import android.app.Activity
 import android.util.Log
 import android.widget.Toast
+import androidx.appcompat.widget.AppCompatEditText
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
-import com.projectorganizer.projectorganizer.activities.CardDetailsActivity
-import com.projectorganizer.projectorganizer.models.Board
-import com.projectorganizer.projectorganizer.activities.CreateBoardActivity
-import com.projectorganizer.projectorganizer.activities.MainActivity
-import com.projectorganizer.projectorganizer.activities.TaskListActivity
+import com.projectorganizer.projectorganizer.R
+import com.projectorganizer.projectorganizer.activities.*
 import com.projectorganizer.projectorganizer.activities.accountHandler.LoginActivity
 import com.projectorganizer.projectorganizer.activities.accountHandler.MyProfileActivity
 import com.projectorganizer.projectorganizer.activities.accountHandler.SignUpActivity
 import com.projectorganizer.projectorganizer.models.User
 import com.projectorganizer.projectorganizer.utils.Constants
 
-class FirestoreClass {
+class FirestoreClass:BaseActivity() {
     private val mFireStore=FirebaseFirestore.getInstance()
 
     fun registerUser(activity:SignUpActivity,userInfo: User) // activity e' l'attivita' in cui viene richiamato il metodo registerUser
@@ -181,6 +180,34 @@ class FirestoreClass {
                         activity.hideProgressDialog()
                     }
                     Log.e(activity.javaClass.simpleName, "Error while creating a board.", e)
+                }
+    }
+
+    fun importBackup(array:ArrayList<String>) {
+        var nome: String = array[0]
+        var immagine: String = array[1]
+        var creatoDa: String = array[2]
+
+
+        val assignedUsersArrayList: ArrayList<String> = ArrayList()
+        assignedUsersArrayList.add(FirestoreClass().getCurrentUserId())
+        var board: Board = Board(nome, immagine, creatoDa,assignedUsersArrayList)
+        println(board.name)
+        println(board.image)
+        println(board.createdBy)
+        mFireStore.collection(Constants.BOARDS).document().set(board, SetOptions.merge())
+
+                .addOnSuccessListener {
+                    //Log.e(this.javaClass.simpleName,"Board creata correttamente!")
+                    //Toast.makeText(this,"Board creata correttamente!",Toast.LENGTH_SHORT).show()
+                    //hideProgressDialog()
+                    setResult(Activity.RESULT_OK)
+                    //finish()
+                }.addOnFailureListener { e ->
+                    hideProgressDialog()
+                    println(nome)
+                    println(immagine)
+                    println(creatoDa)
                 }
     }
 }

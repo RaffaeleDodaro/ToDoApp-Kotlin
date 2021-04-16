@@ -1,5 +1,6 @@
 package com.projectorganizer.projectorganizer.activities
 
+import Board
 import android.app.Activity
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
@@ -13,7 +14,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.projectorganizer.projectorganizer.R
 import com.projectorganizer.projectorganizer.adapters.TaskListItemAdapter
 import com.projectorganizer.projectorganizer.firebase.FirestoreClass
-import com.projectorganizer.projectorganizer.models.Board
 import com.projectorganizer.projectorganizer.models.Card
 import com.projectorganizer.projectorganizer.models.Task
 import com.projectorganizer.projectorganizer.utils.Constants
@@ -71,9 +71,9 @@ class TaskListActivity : BaseActivity() {
 
         val file = File(folder, boardDetails.name+".txt")
 
-        file.appendText("Nome della lista: " + boardDetails.name+"\n")
-        file.appendText("Nome della lista: " + boardDetails.image+"\n")
-        file.appendText("Creato da: " + boardDetails.createdBy+"\n")
+        file.appendText(boardDetails.name+"\n") //"Nome della lista: " +
+        file.appendText(boardDetails.image+"\n") //"Immagine della lista: " +
+        file.appendText(boardDetails.createdBy+"\n") //"Creato da: " +
         var i=0
         while(i<boardDetails.taskList.size)
         {
@@ -166,7 +166,8 @@ class TaskListActivity : BaseActivity() {
 
         val cardAssignedUsersList:ArrayList<String> = ArrayList()
         cardAssignedUsersList.add(FirestoreClass().getCurrentUserId())
-        val card= Card(cardName,FirestoreClass().getCurrentUserId())
+        val card= Card(cardName,FirestoreClass().getCurrentUserId(),
+                cardAssignedUsersList)
 
         val cardsList=boardDetails.taskList[position].cards
         cardsList.add(card)
