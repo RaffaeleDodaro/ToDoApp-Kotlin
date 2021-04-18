@@ -1,4 +1,4 @@
-package com.projectorganizer.projectorganizer.activities
+package com.todoapp.todoapp.activities
 
 import Board
 import android.app.Activity
@@ -11,14 +11,11 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.projectorganizer.projectorganizer.R
-import com.projectorganizer.projectorganizer.adapters.TaskListItemAdapter
-import com.projectorganizer.projectorganizer.firebase.FirestoreClass
-import com.projectorganizer.projectorganizer.models.Card
-import com.projectorganizer.projectorganizer.models.Task
-import com.projectorganizer.projectorganizer.utils.Constants
+import com.todoapp.todoapp.firebase.FirestoreClass
+import com.todoapp.todoapp.models.Card
+import com.todoapp.todoapp.models.Task
+import com.todoapp.todoapp.utils.Constants
+import com.todoapp.todoapp.R
 
 class CardDetailsActivity : BaseActivity() {
 

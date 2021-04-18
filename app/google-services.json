@@ -8,17 +8,17 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:713433698599:android:66dfee7b6026a3a8125902",
+        "mobilesdk_app_id": "1:713433698599:android:536391c9687b21ee125902",
         "android_client_info": {
-          "package_name": "com.projectorganizer.projectorganizer"
+          "package_name": "com.todoapp.todoapp"
         }
       },
       "oauth_client": [
         {
-          "client_id": "713433698599-lunlaiet81s4m559bi43u3c1jhe82ff1.apps.googleusercontent.com",
+          "client_id": "713433698599-r7k55u0o5b9hmm5jr2d4hu0l74q3koo9.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.projectorganizer.projectorganizer",
+            "package_name": "com.todoapp.todoapp",
             "certificate_hash": "1013891987090e398f304052a624cb7336c5d7c2"
           }
         },

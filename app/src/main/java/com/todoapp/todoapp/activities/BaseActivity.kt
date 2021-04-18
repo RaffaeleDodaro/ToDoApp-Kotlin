@@ -1,4 +1,4 @@
-package com.projectorganizer.projectorganizer.activities
+package com.todoapp.todoapp.activities
 
 import android.app.Dialog
 import android.os.Build
@@ -14,7 +14,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
-import com.projectorganizer.projectorganizer.R
+import com.todoapp.todoapp.R
 
 open class BaseActivity : AppCompatActivity() {
 

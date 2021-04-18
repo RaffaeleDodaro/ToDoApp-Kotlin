@@ -1,4 +1,4 @@
-package com.projectorganizer.projectorganizer.adapters
+package com.todoapp.todoapp.adapters
 
 import android.app.AlertDialog
 import android.content.Context
@@ -9,8 +9,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.projectorganizer.projectorganizer.R
-import com.projectorganizer.projectorganizer.models.Card
+import com.todoapp.todoapp.R
+import com.todoapp.todoapp.models.Card
 
 // TODO (Step 3: Create an adapter class for cards list.)
 // START

@@ -1,4 +1,4 @@
-package com.projectorganizer.projectorganizer.activities
+package com.todoapp.todoapp.activities
 
 import android.content.Intent
 import android.os.Build
@@ -10,9 +10,9 @@ import android.widget.Button
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
-import com.projectorganizer.projectorganizer.R
-import com.projectorganizer.projectorganizer.activities.accountHandler.LoginActivity
-import com.projectorganizer.projectorganizer.activities.accountHandler.SignUpActivity
+import com.todoapp.todoapp.R
+import com.todoapp.todoapp.activities.accountHandler.LoginActivity
+import com.todoapp.todoapp.activities.accountHandler.SignUpActivity
 
 class IntroActivity : BaseActivity() {
 

@@ -1,4 +1,4 @@
-package com.projectorganizer.projectorganizer.adapters
+package com.todoapp.todoapp.adapters
 
 import android.app.AlertDialog
 import android.content.Context
@@ -10,9 +10,9 @@ import android.widget.*
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.projectorganizer.projectorganizer.R
-import com.projectorganizer.projectorganizer.activities.TaskListActivity
-import com.projectorganizer.projectorganizer.models.Task
+import com.todoapp.todoapp.R
+import com.todoapp.todoapp.activities.TaskListActivity
+import com.todoapp.todoapp.models.Task
 
 open class TaskListItemAdapter(
     private val context: Context, 

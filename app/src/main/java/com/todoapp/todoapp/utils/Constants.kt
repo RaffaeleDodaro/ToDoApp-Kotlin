@@ -1,4 +1,4 @@
-package com.projectorganizer.projectorganizer.utils
+package com.todoapp.todoapp.utils
 
 object Constants {
     const val USERS:String="users"

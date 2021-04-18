@@ -1,4 +1,4 @@
-package com.projectorganizer.projectorganizer.activities
+package com.todoapp.todoapp.activities
 
 import android.content.Intent
 import android.graphics.Typeface
@@ -10,8 +10,8 @@ import android.os.Looper
 import android.view.WindowInsets
 import android.view.WindowManager
 import android.widget.TextView
-import com.projectorganizer.projectorganizer.R
-import com.projectorganizer.projectorganizer.firebase.FirestoreClass
+import com.todoapp.todoapp.R
+import com.todoapp.todoapp.firebase.FirestoreClass
 
 class SplashActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

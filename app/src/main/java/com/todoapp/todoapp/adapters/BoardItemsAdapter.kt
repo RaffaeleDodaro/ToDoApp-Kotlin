@@ -1,4 +1,4 @@
-package com.projectorganizer.projectorganizer.adapters
+package com.todoapp.todoapp.adapters
 
 import Board
 import android.content.Context
@@ -8,7 +8,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.projectorganizer.projectorganizer.R
+import com.todoapp.todoapp.R
 
 open class BoardItemsAdapter(private val context:Context,
                              private var list:ArrayList<Board>):

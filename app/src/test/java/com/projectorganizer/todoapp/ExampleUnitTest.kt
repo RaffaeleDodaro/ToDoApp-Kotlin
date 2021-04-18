@@ -1,4 +1,4 @@
-package com.projectorganizer.projectorganizer
+package com.projectorganizer.todoapp
 
 import org.junit.Test
 

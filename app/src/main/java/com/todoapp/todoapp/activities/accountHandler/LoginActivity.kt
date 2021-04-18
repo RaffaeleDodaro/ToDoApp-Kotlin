@@ -1,4 +1,4 @@
-package com.projectorganizer.projectorganizer.activities.accountHandler
+package com.todoapp.todoapp.activities.accountHandler
 
 import android.content.Intent
 import android.os.Bundle
@@ -19,11 +19,11 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
-import com.projectorganizer.projectorganizer.R
-import com.projectorganizer.projectorganizer.activities.BaseActivity
-import com.projectorganizer.projectorganizer.activities.MainActivity
-import com.projectorganizer.projectorganizer.firebase.FirestoreClass
-import com.projectorganizer.projectorganizer.models.User
+import com.todoapp.todoapp.activities.BaseActivity
+import com.todoapp.todoapp.activities.MainActivity
+import com.todoapp.todoapp.firebase.FirestoreClass
+import com.todoapp.todoapp.models.User
+import com.todoapp.todoapp.R
 
 
 class LoginActivity : BaseActivity() {

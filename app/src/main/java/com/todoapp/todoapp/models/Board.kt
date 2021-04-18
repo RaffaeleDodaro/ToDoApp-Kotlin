@@ -1,7 +1,7 @@
 
 import android.os.Parcel
 import android.os.Parcelable
-import com.projectorganizer.projectorganizer.models.Task
+import com.todoapp.todoapp.models.Task
 
 data class Board(
         val name:String="",

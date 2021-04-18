@@ -1,4 +1,4 @@
-package com.projectorganizer.projectorganizer.models
+package com.todoapp.todoapp.models
 
 import android.os.Parcel
 import android.os.Parcelable
