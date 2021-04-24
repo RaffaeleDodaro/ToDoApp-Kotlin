@@ -8,7 +8,6 @@ import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
-import com.google.android.gms.auth.api.identity.SignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -19,11 +18,11 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import com.todoapp.todoapp.R
 import com.todoapp.todoapp.activities.BaseActivity
 import com.todoapp.todoapp.activities.MainActivity
 import com.todoapp.todoapp.firebase.FirestoreClass
 import com.todoapp.todoapp.models.User
-import com.todoapp.todoapp.R
 
 
 class LoginActivity : BaseActivity() {
@@ -40,16 +39,14 @@ class LoginActivity : BaseActivity() {
         setupActionBar()
 
 
-
         val signInButton = findViewById<SignInButton>(R.id.btn_sign_inGoogle)
         signInButton.setSize(SignInButton.SIZE_STANDARD)
 
         //leggo i valori per login
         findViewById<Button>(R.id.btn_sign_in).setOnClickListener {
-            val email:String=findViewById<TextView>(R.id.et_emailSignIn).text.toString()
-            val password:String=findViewById<TextView>(R.id.et_passwordSignIn).text.toString()
-            if (validateForm(email, password))
-            {
+            val email: String = findViewById<TextView>(R.id.et_emailSignIn).text.toString()
+            val password: String = findViewById<TextView>(R.id.et_passwordSignIn).text.toString()
+            if (validateForm(email, password)) {
                 showProgressDialog(resources.getString(R.string.please_wait))
                 login(email, password)
 
@@ -93,7 +90,7 @@ class LoginActivity : BaseActivity() {
     }
 
     private fun updateUI(user: FirebaseUser?) {
-        if(user!= null) {
+        if (user != null) {
             hideProgressDialog()
             startActivity(Intent(this, MainActivity::class.java))
             finish() // finisce l'attivita'
@@ -127,16 +124,14 @@ class LoginActivity : BaseActivity() {
     }
 
 
-
-    private fun validateForm(email: String, password: String):Boolean
-    {
+    private fun validateForm(email: String, password: String): Boolean {
         //when equivale allo switch
-        return when{
-            TextUtils.isEmpty(email)->{
+        return when {
+            TextUtils.isEmpty(email) -> {
                 showErrorSnackBar("Inserisci un indirizzo email") // disegna un rettangolo arancione in fondo lo schermo
                 false
             }
-            TextUtils.isEmpty(password)->{
+            TextUtils.isEmpty(password) -> {
                 showErrorSnackBar("Inserisci una password")// disegna un rettangolo arancione in fondo lo schermo
                 false
             }
@@ -146,13 +141,22 @@ class LoginActivity : BaseActivity() {
         }
     }
 
-    private fun login(email: String, password: String)
-    {
+    private fun login(email: String, password: String) {
         FirebaseAuth.getInstance().signInWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     // Calling the FirestoreClass signInUser function to get the data of user from database.
-                    FirestoreClass().loadUserData(this)
+                    val user = FirebaseAuth.getInstance().currentUser
+                    if (user.isEmailVerified)
+                        FirestoreClass().loadUserData(this)
+                    else {
+                        Toast.makeText(
+                            this,
+                            "Non hai verificato l'account. Controlla l'email", // !! vuol dire che task NON deve essere nullo
+                            Toast.LENGTH_LONG
+                        ).show()
+                        hideProgressDialog()
+                    }
                 } else {
                     Toast.makeText(
                         this,
@@ -163,7 +167,6 @@ class LoginActivity : BaseActivity() {
                 }
             }
     }
-
 
 
     //aggiunge una freccia alla schermata sign in che permette di tornare indietro
@@ -177,8 +180,7 @@ class LoginActivity : BaseActivity() {
         findViewById<Toolbar>(R.id.toolbar_sign_in_activity).setNavigationOnClickListener { onBackPressed() }
     }
 
-    fun signInSuccess(user: User)
-    {
+    fun signInSuccess(user: User) {
         hideProgressDialog()
         startActivity(Intent(this, MainActivity::class.java))
         finish() // finisce l'attivita'

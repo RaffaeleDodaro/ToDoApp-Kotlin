@@ -33,6 +33,12 @@
     <string name="create">Crea</string>
     <!--END create board-->
 
+
+    <!--START edit board-->
+    <string name="edit_board_title">Modifica la board</string>
+    <string name="edit">Modifica</string>
+    <!--END edit board-->
+
     <string name="no_boards_are_available"> Non ci sono bacheche disponibili</string>
 
     <string name="action_add_list">Aggiungi lista</string>

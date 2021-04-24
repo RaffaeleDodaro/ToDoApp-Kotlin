@@ -1,12 +1,14 @@
 package com.todoapp.todoapp.activities
 
 import android.content.Intent
+import android.graphics.Typeface
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.WindowInsets
 import android.view.WindowManager
 import android.widget.Button
+import android.widget.TextView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
@@ -37,6 +39,8 @@ class IntroActivity : BaseActivity() {
                 WindowManager.LayoutParams.FLAG_FULLSCREEN
             )
         }
+        val tf: Typeface = Typeface.createFromAsset(assets,"Bulletto Killa.ttf")
+        findViewById<TextView>(R.id.tv_app_name_intro).typeface=tf
 
         if(user !=null || currentUser!=null) {
 

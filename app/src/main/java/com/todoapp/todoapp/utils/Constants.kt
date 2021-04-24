@@ -12,4 +12,5 @@ object Constants {
     const val CARD_LIST_ITEM_POSITION:String = "card_list_item_position"
 
     const val BOARD_DETAIL: String = "board_detail"
+    const val TITLE: String = "title"
 }

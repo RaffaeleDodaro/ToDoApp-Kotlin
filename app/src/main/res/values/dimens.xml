@@ -74,6 +74,15 @@
     <dimen name="fab_margin">16dp</dimen>
     <!--END create board-->
 
+    <!--START edit board-->
+    <dimen name="edit_board_screen_content_marginStartEnd">16dp</dimen>
+    <dimen name="edit_board_screen_content_marginTopBottom">10dp</dimen>
+    <dimen name="edit_board_screen_content_padding">16dp</dimen>
+    <dimen name="edit_board_image_size">100dp</dimen>
+    <dimen name="edit_board_name_til_marginTop">25dp</dimen>
+    <dimen name="edit_board_btn_create_marginTop">30dp</dimen>
+    <!--END edit board-->
+
     <!--START main activity-->
     <dimen name="main_screen_content_padding">16dp</dimen>
     <dimen name="no_boards_available_text_size">16sp</dimen>

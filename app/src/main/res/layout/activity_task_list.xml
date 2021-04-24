@@ -37,11 +37,11 @@
                     app:showAsAction="always"></Button>
 
                 <Button
-                    android:id="@+id/btn_share"
+                    android:id="@+id/btn_edit"
                     android:layout_width="50dp"
                     android:layout_height="wrap_content"
                     android:background="#00aaaaaa"
-                    android:drawableStart="@android:drawable/ic_menu_share"
+                    android:drawableStart="@android:drawable/ic_menu_edit"
                     app:showAsAction="always"></Button>
 
 

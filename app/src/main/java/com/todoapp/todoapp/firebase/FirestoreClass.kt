@@ -21,6 +21,13 @@ class FirestoreClass:BaseActivity() {
     {
         mFireStore.collection(Constants.USERS).document(getCurrentUserId()).set(userInfo,
             SetOptions.merge()).addOnSuccessListener {
+                var user = FirebaseAuth.getInstance().currentUser
+                user.sendEmailVerification()
+                Toast.makeText(
+                    this,
+                    "Ti abbiamo inviato una mail per verificare l'account!", // !! vuol dire che task NON deve essere nullo
+                    Toast.LENGTH_LONG
+                ).show()
                 activity.userRegisteredSuccess()
         }.addOnFailureListener{
             e-> // e rappresenta exception
@@ -31,7 +38,7 @@ class FirestoreClass:BaseActivity() {
     fun loadUserData(activity: Activity, readBoardList:Boolean=false) // activity e' l'attivita' in cui viene richiamato il metodo loadUserData
     {
         mFireStore.collection(Constants.USERS).document(getCurrentUserId()).get().addOnSuccessListener {document ->
-            Log.e(activity.javaClass.simpleName, document.toString())
+            //Log.e(activity.javaClass.simpleName, document.toString())
             var loggedInUser=document.toObject(User::class.java)
             if(loggedInUser !=null){
                 when(activity){
@@ -84,7 +91,7 @@ class FirestoreClass:BaseActivity() {
             .get() // Will get the documents snapshots.
             .addOnSuccessListener { document ->
                 // Here we get the list of boards in the form of documents.
-                Log.e(activity.javaClass.simpleName, document.toString())
+                //Log.e(activity.javaClass.simpleName, document.toString())
                
                 val board=document.toObject(Board::class.java)!!
                 board.documentId=document.id
@@ -97,21 +104,21 @@ class FirestoreClass:BaseActivity() {
             .addOnFailureListener { e ->
 
                 activity.hideProgressDialog()
-                Log.e(activity.javaClass.simpleName, "Error while creating a board.", e)
+                Log.e(activity.javaClass.simpleName, "Error mentre creo la board.", e)
             }
     }
 
-    fun createBoard(boardActivity: BoardActivity, board: Board) {
+    fun createBoard(createBoardActivity: CreateBoardActivity, board: Board) {
         mFireStore.collection(Constants.BOARDS).document().set(board, SetOptions.merge())
             .addOnSuccessListener {
-                Log.e(boardActivity.javaClass.simpleName,"Board creata correttamente!")
-                Toast.makeText(boardActivity,"Board creata correttamente!",Toast.LENGTH_SHORT).show()
-                boardActivity.boardCreatedSuccessfully()
+                Log.e(createBoardActivity.javaClass.simpleName,"Board creata correttamente!")
+                Toast.makeText(createBoardActivity,"Board creata correttamente!",Toast.LENGTH_SHORT).show()
+                createBoardActivity.boardCreatedSuccessfully()
             }.addOnFailureListener{
                     e->
-                    boardActivity.hideProgressDialog()
+                    createBoardActivity.hideProgressDialog()
                     Log.e(
-                            boardActivity.javaClass.simpleName,
+                            createBoardActivity.javaClass.simpleName,
                             "Errore createboard",
                             e
                     )}
@@ -119,20 +126,20 @@ class FirestoreClass:BaseActivity() {
         //println("document id: "+board.documentId)
     }
 
-    fun createBoardFromBackup(boardActivity: BoardActivity, board: Board) {
+    fun createBoardFromBackup(createBoardActivity: CreateBoardActivity, board: Board) {
         mFireStore.collection(Constants.BOARDS).document().set(board, SetOptions.merge())
                 .addOnSuccessListener {
-                    boardActivity.boardCreatedSuccessfullyFromBackup()
+                    Log.e(createBoardActivity.javaClass.simpleName,"Board creata correttamente!")
+//                    Toast.makeText(boardActivity,"Board creata correttamente!",Toast.LENGTH_SHORT).show()
+                    //boardActivity.boardCreatedSuccessfullyFromBackup()
                 }.addOnFailureListener{
                     e->
-                    boardActivity.hideProgressDialog()
+                    createBoardActivity.hideProgressDialog()
                     Log.e(
-                            boardActivity.javaClass.simpleName,
+                            createBoardActivity.javaClass.simpleName,
                             "Errore createboardfrombackup",
                             e
                     )}
-
-        println("document id: "+board.documentId)
     }
 
     fun getBoardsList(activity: MainActivity) //from database
@@ -144,7 +151,7 @@ class FirestoreClass:BaseActivity() {
                 .get() // Will get the documents snapshots.
                 .addOnSuccessListener { document ->
                     // Here we get the list of boards in the form of documents.
-                    Log.e(activity.javaClass.simpleName, document.documents.toString())
+                    //Log.e(activity.javaClass.simpleName, document.documents.toString())
                     // Here we have created a new instance for Boards ArrayList.
                     val boardsList: ArrayList<Board> = ArrayList()
 
@@ -163,7 +170,7 @@ class FirestoreClass:BaseActivity() {
                 .addOnFailureListener { e ->
 
                     activity.hideProgressDialog()
-                    Log.e(activity.javaClass.simpleName, "Error while creating a board.", e)
+                    Log.e(activity.javaClass.simpleName, "Errore mentre creo la board.", e)
                 }
     }
 
@@ -176,7 +183,7 @@ class FirestoreClass:BaseActivity() {
                 .document(board.documentId)
                 .update(taskListHashMap)
                 .addOnSuccessListener {
-                    Log.e(activity.javaClass.simpleName, "TaskList updated successfully.")
+                    Log.e(activity.javaClass.simpleName, "TaskList aggiornata.")
 
                     if (activity is TaskListActivity)
                         activity.addUpdateTaskListSuccess()
@@ -191,7 +198,7 @@ class FirestoreClass:BaseActivity() {
                     } else if (activity is TaskListActivity) {
                         activity.hideProgressDialog()
                     }
-                    Log.e(activity.javaClass.simpleName, "Error while creating a board.", e)
+                    Log.e(activity.javaClass.simpleName, "Error mentre creo la board.", e)
                 }
     }
 
@@ -207,8 +214,25 @@ class FirestoreClass:BaseActivity() {
                 .addOnFailureListener { e ->
                     if (activity is TaskListActivity)
                         activity.hideProgressDialog()
-                    Log.e(activity.javaClass.simpleName, "Error while deleting a board.", e)
+                    Log.e(activity.javaClass.simpleName, "Error mnentre creo la board.", e)
                 }
     }
+
+    fun editBoardName(activity: EditBoardActivity, documentId: String,newName:String) {
+        mFireStore.collection(Constants.BOARDS)
+            .document(documentId)
+            .update(Constants.NAME,newName)
+            .addOnSuccessListener {
+                Toast.makeText(activity,"Board modificata correttamente!",Toast.LENGTH_SHORT).show()
+                activity.editBoardSuccessfully()
+            }
+                .addOnFailureListener{
+                        e ->
+                    if (activity is EditBoardActivity)
+                        activity.hideProgressDialog()
+                    Log.e(activity.javaClass.simpleName, "Error mnentre creo la board.", e)
+                }
+            }
+
 
 }

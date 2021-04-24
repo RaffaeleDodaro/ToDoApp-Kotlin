@@ -11,7 +11,7 @@
         android:theme="@style/AppTheme.AppBarOverlay">
 
         <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar_create_board"
+            android:id="@+id/toolbar_edit_board"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
@@ -27,10 +27,10 @@
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginStart="@dimen/create_board_screen_content_marginStartEnd"
-            android:layout_marginTop="@dimen/create_board_screen_content_marginTopBottom"
-            android:layout_marginEnd="@dimen/create_board_screen_content_marginStartEnd"
-            android:layout_marginBottom="@dimen/create_board_screen_content_marginTopBottom"
+            android:layout_marginStart="@dimen/edit_board_screen_content_marginStartEnd"
+            android:layout_marginTop="@dimen/edit_board_screen_content_marginTopBottom"
+            android:layout_marginEnd="@dimen/edit_board_screen_content_marginStartEnd"
+            android:layout_marginBottom="@dimen/edit_board_screen_content_marginTopBottom"
             android:elevation="@dimen/card_view_elevation"
             app:cardCornerRadius="@dimen/card_view_corner_radius">
 
@@ -39,12 +39,12 @@
                 android:layout_height="wrap_content"
                 android:gravity="center_horizontal"
                 android:orientation="vertical"
-                android:padding="@dimen/create_board_screen_content_padding">
+                android:padding="@dimen/edit_board_screen_content_padding">
 
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/iv_board_image"
-                    android:layout_width="@dimen/create_board_image_size"
-                    android:layout_height="@dimen/create_board_image_size"
+                    android:layout_width="@dimen/edit_board_image_size"
+                    android:layout_height="@dimen/edit_board_image_size"
                     android:contentDescription="@string/image_contentDescription"
                     android:src="@drawable/ic_handler_job" />
 
@@ -52,10 +52,10 @@
                     android:id="@+id/txtBoardName"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/create_board_name_til_marginTop">
+                    android:layout_marginTop="@dimen/edit_board_name_til_marginTop">
 
                     <androidx.appcompat.widget.AppCompatEditText
-                        android:id="@+id/et_board_name"
+                        android:id="@+id/et_board_name_edit"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="@string/board_name"
@@ -65,17 +65,17 @@
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <Button
-                    android:id="@+id/btn_create"
+                    android:id="@+id/btn_edit"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:layout_marginTop="@dimen/create_board_btn_create_marginTop"
+                    android:layout_marginTop="@dimen/edit_board_btn_create_marginTop"
                     android:background="@drawable/shape_button_rounded"
                     android:foreground="?attr/selectableItemBackground"
                     android:gravity="center"
                     android:paddingTop="@dimen/btn_paddingTopBottom"
                     android:paddingBottom="@dimen/btn_paddingTopBottom"
-                    android:text="@string/create"
+                    android:text="@string/edit"
                     android:textColor="@android:color/white"
                     android:textSize="@dimen/btn_text_size" />
             </LinearLayout>

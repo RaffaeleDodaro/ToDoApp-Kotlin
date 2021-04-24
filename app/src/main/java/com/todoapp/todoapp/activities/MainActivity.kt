@@ -1,7 +1,9 @@
 package com.todoapp.todoapp.activities
 
 import Board
+import android.R.attr
 import android.app.Activity
+import android.content.ContentResolver
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -27,6 +29,7 @@ import com.todoapp.todoapp.models.User
 import com.todoapp.todoapp.utils.Constants
 import java.io.*
 
+
 class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedListener {
 
     private lateinit var mUserName: String
@@ -42,7 +45,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         const val CREATE_BOARD_REQUEST_CODE: Int = 12
         const val DELETE_BOARD_REQUEST_CODE: Int = 13
 
-        const val IMPORT_FILE = 111
+        const val IMPORT_FILE = 42
 
     }
 
@@ -58,7 +61,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
 
         val fab = findViewById<FloatingActionButton>(R.id.fab_create_board)
         fab.setOnClickListener {
-            val intent = Intent(this@MainActivity, BoardActivity::class.java)
+            val intent = Intent(this@MainActivity, CreateBoardActivity::class.java)
             intent.putExtra(Constants.NAME, mUserName)
             startActivityForResult(intent, CREATE_BOARD_REQUEST_CODE) //appbarmain.xml
         }
@@ -145,18 +148,16 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
 
             R.id.nav_import -> {//se e' stato premuto il per importa una todo list
 
-                val intent = Intent()
-                        .setType("*/*")
-                        .setAction(Intent.ACTION_GET_CONTENT)
-
-                startActivityForResult(Intent.createChooser(intent, "Select a file"), IMPORT_FILE)
+                val intent = Intent(Intent.ACTION_OPEN_DOCUMENT)
+                intent.addCategory(Intent.CATEGORY_OPENABLE)
+                intent.type = "text/*"
+                startActivityForResult(intent, 42);
 
             }
         }
         findViewById<DrawerLayout>(R.id.drawer_layout).closeDrawer(GravityCompat.START)
         return true
     }
-
 
     fun updateNavigationUserDetails(user: User, readBoardList: Boolean) {
         /*
@@ -186,33 +187,33 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
             FirestoreClass().loadUserData(this)
         else if (resultCode == Activity.RESULT_OK && requestCode == CREATE_BOARD_REQUEST_CODE)
             FirestoreClass().getBoardsList(this)
-        else if (resultCode == Activity.RESULT_OK && requestCode == DELETE_BOARD_REQUEST_CODE)
-            FirestoreClass().getBoardsList(this)
         else if (resultCode == Activity.RESULT_OK)
             FirestoreClass().getBoardsList(this)
         else
             Log.e("Error", "Error")
 
         if (requestCode == IMPORT_FILE && resultCode == RESULT_OK) {
-            val selectedFile = data?.data //The uri with the location of the file <p>
-            readTextFromUri(selectedFile!!)
+            val uri: Uri? = if (attr.data != null) data!!.data else null
+            readText(uri)
         }
     }
 
-    @Throws(IOException::class)
-    private fun readTextFromUri(uri: Uri) {
-        var array = ArrayList<String>()
-        contentResolver.openInputStream(uri)?.use {
-            inputStream ->
-            BufferedReader(InputStreamReader(inputStream)).use {
-                reader ->
-                var line: String? = reader.readLine()
-                while (line != null) {
-                    array.add(line)
-                    line = reader.readLine()
-                }
+    private fun readText(uri: Uri?) {
+        var cr: ContentResolver = contentResolver
+        if (uri != null) {
+            cr.takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            var inputStream: InputStream? = null
+            inputStream = cr.openInputStream(uri)
+            var reader:BufferedReader= BufferedReader(InputStreamReader(inputStream))
+            TaskListActivity().importBackup(reader)
+            if (inputStream != null) {
+                closeQuietlyIS(inputStream)
             }
         }
-        TaskListActivity().importBackup(array)
+    }
+
+    private fun closeQuietlyIS(closeable: AutoCloseable) {
+        if (closeable != null)
+            closeable.close();
     }
 }

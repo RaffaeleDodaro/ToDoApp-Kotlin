@@ -1,7 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--TODO (Step 4: Design a recycler view item for Boards Listing.)-->
-<!--START-->
-<!--Here all the constants are added in their respective folders and files. -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -58,4 +55,3 @@
         android:background="@color/divider_color" />
 
 </LinearLayout>
-    <!--END-->

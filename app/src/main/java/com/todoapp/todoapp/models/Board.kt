@@ -34,6 +34,7 @@ data class Board(
         return 0
     }
 
+
     companion object CREATOR : Parcelable.Creator<Board> {
         override fun createFromParcel(parcel: Parcel): Board {
             return Board(parcel)
