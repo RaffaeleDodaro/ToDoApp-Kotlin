@@ -4,6 +4,8 @@ object Constants {
     const val USERS:String="users"
     const val BOARDS: String = "boards"
     const val NAME: String = "name"
+    const val EMAIL: String = "email"
+    const val PASSWORD: String = "email"
     const val ASSIGNED_TO:String="assignedTo"
     const val DOCUMENT_ID:String="documentId"
 

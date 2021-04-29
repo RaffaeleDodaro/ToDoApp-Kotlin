@@ -206,7 +206,7 @@ class SignUpActivity : BaseActivity() {
     }
 
     fun userRegisteredSuccess() {
-        Toast.makeText(this, "Ti sei registrato correttamente", Toast.LENGTH_LONG).show()
+        Toast.makeText(this, "Ti sei registrato correttamente. Controlla l'email", Toast.LENGTH_LONG).show()
 
         hideProgressDialog()
         finish()
