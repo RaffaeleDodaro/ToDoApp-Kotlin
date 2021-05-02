@@ -37,7 +37,6 @@ class MyProfileActivity : BaseActivity() {
             //This listener will be called whenever the user clicks the navigation button at the start of the toolbar. An icon must be set for the navigation button to appear.
         }
         findViewById<Button>(R.id.btn_update).setOnClickListener {
-            println("MMMMMMMMMMMMMMMMMMMMMMM")
             updateData()
             //Set a listener to respond to navigation events.
             //This listener will be called whenever the user clicks the navigation button at the start of the toolbar. An icon must be set for the navigation button to appear.
@@ -68,31 +67,41 @@ class MyProfileActivity : BaseActivity() {
         val name: String = findViewById<EditText>(R.id.et_name).text.toString()
         val password: String = findViewById<EditText>(R.id.et_password).text.toString()
 
-//        if (password != "") {
-//            user!!.updatePassword(password)
-//        }
-
-        if(!(user!!.email.equals(email,true))) { //da tenere sott'occhio l'if
-            user.verifyBeforeUpdateEmail(email)
-                .addOnCompleteListener { task ->
-                    if (task.isSuccessful) {
-                        // Email sent.
-                        // User must click the email link before the email is updated.
-                        FirestoreClass().editEmail(this, user.uid, email)
-                    } else {
-                        // An error occurred.
-                        println("errore verifyBeforeUpdateEmail")
+        if (email.isNotEmpty()) {
+            if (!(user!!.email.equals(email, true))) { //da tenere sott'occhio l'if
+                println("QUIIIIIIIII")
+                user.verifyBeforeUpdateEmail(email)
+                    .addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            // Email sent.
+                            // User must click the email link before the email is updated.
+                            FirestoreClass().editEmail(this, user.uid, email)
+                        } else {
+                            // An error occurred.
+                            Toast.makeText(this, "Nuova email non valida", Toast.LENGTH_SHORT).show()
+                            println("errore verifyBeforeUpdateEmail")
+                        }
                     }
-                }
+            }
         }
+        if (password.isNotEmpty()) {
+            user!!.updatePassword(password).addOnCompleteListener{task->
+                if(task.isSuccessful) {
+                    Toast.makeText(this, "Password cambiata correttamente.\n Accedi nuovamente", Toast.LENGTH_SHORT)
+                        .show()
+                    editUserSuccessfully()
+                }
+                else
+                    Toast.makeText(this, "Password non cambiata correttamente", Toast.LENGTH_SHORT).show()
 
-        if(!(user.displayName.equals(name,true)))
+            }
+        }
+        if (!(user!!.displayName.equals(name, true)))
             FirestoreClass().editName(this, user.uid, name)
     }
 
     fun editUserSuccessfully() {
         FirebaseAuth.getInstance().signOut()
-
         val intent = Intent(this, IntroActivity::class.java) //cambio activity
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
         startActivity(intent)

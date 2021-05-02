@@ -4,7 +4,11 @@ import Board
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.provider.MediaStore
+import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
@@ -15,11 +19,14 @@ import com.google.android.material.textfield.TextInputLayout
 import com.todoapp.todoapp.R
 import com.todoapp.todoapp.firebase.FirestoreClass
 import com.todoapp.todoapp.utils.Constants
+import de.hdodenhof.circleimageview.CircleImageView
 import kotlin.random.Random
 
 class CreateBoardActivity : BaseActivity() {
 
     private lateinit var userName: String
+    private val  pickImage=100
+    private var imageUri: Uri? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,6 +42,25 @@ class CreateBoardActivity : BaseActivity() {
                 createBoard()
             }
             else Toast.makeText(this,"Inserisci il nome",Toast.LENGTH_SHORT).show()
+        }
+
+
+
+
+        //TESTTTTTTTTTT
+        var civ=findViewById<CircleImageView>(R.id.iv_board_image).setOnClickListener{
+            it:View->
+            val gallery=Intent(Intent.ACTION_PICK,MediaStore.Images.Media.INTERNAL_CONTENT_URI)
+            startActivityForResult(gallery,pickImage)
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if(resultCode== RESULT_OK && requestCode==pickImage){
+            imageUri=data?.data
+            println("uri $imageUri")
+            findViewById<CircleImageView>(R.id.iv_board_image).setImageURI(imageUri)
         }
     }
 
@@ -67,8 +93,10 @@ class CreateBoardActivity : BaseActivity() {
     private fun createBoard() {
         val assignedUsersArrayList: ArrayList<String> = ArrayList()
         assignedUsersArrayList.add(FirestoreClass().getCurrentUserId())
-        var board = Board(findViewById<AppCompatEditText>(R.id.et_board_name).text.toString(),
-                randomImage(), userName, assignedUsersArrayList)
+//        val board = Board(findViewById<AppCompatEditText>(R.id.et_board_name).text.toString(),
+//                randomImage(), userName, assignedUsersArrayList)
+        val board = Board(findViewById<AppCompatEditText>(R.id.et_board_name).text.toString(),
+                imageUri.toString(), userName, assignedUsersArrayList)
         FirestoreClass().createBoard(this, board)
     }
 

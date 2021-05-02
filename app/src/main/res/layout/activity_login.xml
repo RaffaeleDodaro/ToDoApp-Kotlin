@@ -134,6 +134,24 @@
                     android:gravity="center"
                     android:textSize="@dimen/btn_text_size"
                     />
+
+                <Button
+                    android:background="@drawable/shape_button_rounded"
+                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:id="@+id/btn_resetpassword"
+                    android:textSize="@dimen/btn_text_size"
+                    android:textColor="@android:color/white"
+                    android:text="@string/reset_password"
+                    android:gravity="center"
+                    android:layout_marginTop="@dimen/sign_in_screen_btn_marginTop"
+                    android:layout_gravity="center"
+                    android:layout_marginEnd="@dimen/btn_marginStartEnd"
+                    android:layout_marginStart="@dimen/btn_marginStartEnd"
+                    android:paddingBottom="@dimen/btn_paddingTopBottom"
+                    android:paddingTop="@dimen/btn_paddingTopBottom"
+                    android:foreground="?attr/selectableItemBackground"/>
+
             </LinearLayout>
 
         </androidx.cardview.widget.CardView>

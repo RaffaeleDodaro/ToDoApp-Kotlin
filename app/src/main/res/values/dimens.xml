@@ -31,6 +31,10 @@
     <dimen name="authentication_screen_til_marginTop">20dp</dimen>
     <!--END sign up-->
 
+    <!--START sign in-->
+    <dimen name="sign_in_screen_btn_marginTop">30dp</dimen>
+    <!--END sign up-->
+
 
 
     <!--START dimensione dialog progress-->

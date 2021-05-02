@@ -62,9 +62,25 @@ class LoginActivity : BaseActivity() {
         findViewById<SignInButton>(R.id.btn_sign_inGoogle).setOnClickListener {
 
             signInWithGoogle()
-        }
 
+        }
         auth = Firebase.auth
+
+        findViewById<Button>(R.id.btn_resetpassword).setOnClickListener {
+            val email: String = findViewById<TextView>(R.id.et_emailSignIn).text.toString()
+            if(email.isNotEmpty())
+            {
+                auth.sendPasswordResetEmail(email)
+                    .addOnCompleteListener { task ->
+                        if (task.isSuccessful)
+                            Toast.makeText(this@LoginActivity, "Dai un'occhiata alla tua email per completare il reset", Toast.LENGTH_SHORT).show()
+                        else
+                            Toast.makeText(this@LoginActivity, "Account non trovato!", Toast.LENGTH_SHORT).show()
+                    }
+            }
+            else
+                showErrorSnackBar("Inserisci una email!")
+        }
 
     }
 
@@ -147,7 +163,7 @@ class LoginActivity : BaseActivity() {
                 if (task.isSuccessful) {
                     // Calling the FirestoreClass signInUser function to get the data of user from database.
                     val user = FirebaseAuth.getInstance().currentUser
-                    if (user.isEmailVerified)
+                    if (user!!.isEmailVerified)
                         FirestoreClass().loadUserData(this)
                     else {
                         Toast.makeText(
