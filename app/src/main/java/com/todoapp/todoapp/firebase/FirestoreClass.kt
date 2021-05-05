@@ -3,10 +3,13 @@ package com.todoapp.todoapp.firebase
 import Board
 import android.app.Activity
 import android.util.Log
+import android.view.Gravity
+import android.widget.ImageView
 import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
+import com.todoapp.todoapp.R
 import com.todoapp.todoapp.activities.*
 import com.todoapp.todoapp.activities.accountHandler.LoginActivity
 import com.todoapp.todoapp.activities.accountHandler.MyProfileActivity
@@ -111,29 +114,20 @@ class FirestoreClass : BaseActivity() {
         mFireStore.collection(Constants.BOARDS).document().set(board, SetOptions.merge())
             .addOnSuccessListener {
                 Log.e(createBoardActivity.javaClass.simpleName, "Board creata correttamente!")
-                Toast.makeText(
-                    createBoardActivity,
-                    "Board creata correttamente!",
-                    Toast.LENGTH_SHORT
-                ).show()
+
+                Toast.makeText(createBoardActivity,"Board creata correttamente!",Toast.LENGTH_LONG).show()
                 createBoardActivity.boardCreatedSuccessfully()
             }.addOnFailureListener { e ->
                 createBoardActivity.hideProgressDialog()
-                Log.e(
-                    createBoardActivity.javaClass.simpleName,
-                    "Errore createboard",
-                    e
-                )
+                Log.e(createBoardActivity.javaClass.simpleName,"Errore createboard",e)
             }
-
-        //println("document id: "+board.documentId)
     }
 
     fun createBoardFromBackup(createBoardActivity: CreateBoardActivity, board: Board) {
         mFireStore.collection(Constants.BOARDS).document().set(board, SetOptions.merge())
             .addOnSuccessListener {
                 Log.e(createBoardActivity.javaClass.simpleName, "Board creata correttamente!")
-//                    Toast.makeText(boardActivity,"Board creata correttamente!",Toast.LENGTH_SHORT).show()
+                Toast.makeText(createBoardActivity,"Board creata correttamente!",Toast.LENGTH_LONG).show()
                 //boardActivity.boardCreatedSuccessfullyFromBackup()
             }.addOnFailureListener { e ->
                 createBoardActivity.hideProgressDialog()
@@ -160,10 +154,8 @@ class FirestoreClass : BaseActivity() {
 
                 // A for loop as per the list of documents to convert them into Boards ArrayList.
                 for (i in document.documents) {
-
                     val board = i.toObject(Board::class.java)!!
                     board.documentId = i.id
-
                     boardsList.add(board)
                 }
 
@@ -171,7 +163,6 @@ class FirestoreClass : BaseActivity() {
                 activity.populateBoardsListToUI(boardsList)
             }
             .addOnFailureListener { e ->
-
                 activity.hideProgressDialog()
                 Log.e(activity.javaClass.simpleName, "Errore mentre creo la board.", e)
             }
@@ -197,8 +188,6 @@ class FirestoreClass : BaseActivity() {
             .addOnFailureListener { e ->
                 if (activity is TaskListActivity) {
                     activity.hideProgressDialog()
-                } else if (activity is TaskListActivity) {
-                    activity.hideProgressDialog()
                 }
                 Log.e(activity.javaClass.simpleName, "Error mentre creo la board.", e)
             }
@@ -210,8 +199,7 @@ class FirestoreClass : BaseActivity() {
             .delete()
             .addOnSuccessListener {
                 Log.e(activity.javaClass.simpleName, "Board cancellata correttamente!")
-                Toast.makeText(activity, "Board cancellata correttamente!", Toast.LENGTH_SHORT)
-                    .show()
+                Toast.makeText(activity, "Board cancellata correttamente!", Toast.LENGTH_SHORT).show()
                 activity.deleteBoardSuccessfully()
             }
             .addOnFailureListener { e ->
@@ -241,9 +229,9 @@ class FirestoreClass : BaseActivity() {
             .update(Constants.EMAIL, email)
             .addOnSuccessListener {
                 Toast.makeText(
-                    this,
+                    activity,
                     "Utente modificato correttamente! Controlla l'email",
-                    Toast.LENGTH_SHORT
+                    Toast.LENGTH_LONG
                 )
                     .show()
                 activity.editUserSuccessfully()

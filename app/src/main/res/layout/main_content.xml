@@ -24,19 +24,32 @@
             android:id="@+id/rv_boards_list"
             android:visibility="gone">
         </androidx.recyclerview.widget.RecyclerView>
+
         <TextView
             android:id="@+id/tv_no_boards_available"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:gravity="center"
             android:text="@string/no_boards_are_available"
+            android:textColor="@color/secondary_text_color"
+            android:textSize="@dimen/no_boards_available_text_size"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/no_job"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_marginTop="100dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            android:gravity="center"
-            android:textColor="@color/secondary_text_color"
-            android:textSize="@dimen/no_boards_available_text_size"
-            />
+            app:srcCompat="@drawable/screenshot_1"
+            android:contentDescription="TODO" />
     </androidx.cardview.widget.CardView>
 
 

@@ -73,6 +73,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         if (boardsList.size > 0) {
             rv_boards_list.visibility = View.VISIBLE
             findViewById<TextView>(R.id.tv_no_boards_available).visibility = View.GONE //con gone la tv diventa invisibile
+            findViewById<ImageView>(R.id.no_job).visibility = View.GONE //con gone diventa invisibile
 
 
             rv_boards_list.layoutManager = LinearLayoutManager(this)
@@ -96,6 +97,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         } else {
             rv_boards_list.visibility = View.GONE
             findViewById<TextView>(R.id.tv_no_boards_available).visibility = View.VISIBLE
+            findViewById<ImageView>(R.id.no_job).visibility = View.VISIBLE //con gone diventa invisibile
         }
     }
 

@@ -54,4 +54,7 @@
     <string name="alert">Attenzione!</string>
     <string name="yes">Si</string>
     <string name="no">No</string>
+
+
+    <string name="motivational_phrase">Frase motivazionale</string>
 </resources>

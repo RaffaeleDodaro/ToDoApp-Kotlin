@@ -88,7 +88,7 @@ class TaskListActivity : BaseActivity() {
         val addTaskList = Task(resources.getString(R.string.add_list))
         board.taskList.add(addTaskList)
 
-        var rv = findViewById<RecyclerView>(R.id.rv_task_list)
+        val rv = findViewById<RecyclerView>(R.id.rv_task_list)
 
         rv.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
         rv.setHasFixedSize(true)
@@ -103,7 +103,6 @@ class TaskListActivity : BaseActivity() {
      */
     fun addUpdateTaskListSuccess() {
         hideProgressDialog()
-
         showProgressDialog(resources.getString(R.string.please_wait))
         FirestoreClass().getBoardDetails(this@TaskListActivity, boardDetails.documentId)
     }
@@ -134,9 +133,8 @@ class TaskListActivity : BaseActivity() {
         } else if (requestCode == REQUEST_SAF) {
             when (resultCode) {
                 RESULT_OK ->
-                    if (attr.data != null
-                            && data!!.data != null) {
-                        exportBackup(data!!.data)
+                    if (data!!.data != null) {
+                        exportBackup(data.data)
                     }
 
                 RESULT_CANCELED -> {
@@ -406,6 +404,6 @@ class TaskListActivity : BaseActivity() {
 
     companion object {
         const val CARD_DETAILS_REQUEST_CODE: Int = 14
-        val EDIT_BOARD_REQUEST_CODE: Int = 999
+        const val EDIT_BOARD_REQUEST_CODE: Int = 999
     }
 }

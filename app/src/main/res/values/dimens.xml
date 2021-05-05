@@ -131,4 +131,5 @@
     <dimen name="card_details_value_marginTop">5dp</dimen>
     <dimen name="card_details_value_padding">10dp</dimen>
     <dimen name="card_details_update_btn_marginTop">30dp</dimen>
+    <dimen name="motivational_phrases">10sp</dimen>
 </resources>
