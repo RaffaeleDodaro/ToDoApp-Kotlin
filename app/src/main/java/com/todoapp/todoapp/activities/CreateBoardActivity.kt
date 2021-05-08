@@ -1,32 +1,38 @@
 package com.todoapp.todoapp.activities
 
 import Board
+import android.Manifest
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.widget.AppCompatEditText
 import androidx.appcompat.widget.Toolbar
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.core.view.isEmpty
+import com.bumptech.glide.Glide
 import com.google.android.material.textfield.TextInputLayout
 import com.todoapp.todoapp.R
 import com.todoapp.todoapp.firebase.FirestoreClass
 import com.todoapp.todoapp.utils.Constants
 import de.hdodenhof.circleimageview.CircleImageView
+import java.io.IOException
 import kotlin.random.Random
 
 class CreateBoardActivity : BaseActivity() {
 
     private lateinit var userName: String
-    private val  pickImage=100
-    private var imageUri: Uri? = null
+    private var mSelectedImageFileUri: Uri? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,30 +43,63 @@ class CreateBoardActivity : BaseActivity() {
             userName = intent.getStringExtra(Constants.NAME).toString()
 
         findViewById<Button>(R.id.btn_create).setOnClickListener {
-            if(findViewById<EditText>(R.id.et_board_name).text.toString() != ""){
+            if (findViewById<EditText>(R.id.et_board_name).text.toString() != "") {
                 showProgressDialog(resources.getString(R.string.please_wait))
                 createBoard()
-            }
-            else Toast.makeText(this,"Inserisci il nome",Toast.LENGTH_SHORT).show()
+            } else Toast.makeText(this, "Inserisci il nome", Toast.LENGTH_SHORT).show()
         }
 
 
+        findViewById<CircleImageView>(R.id.iv_board_image).setOnClickListener {
+            if (ContextCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.READ_EXTERNAL_STORAGE
+                ) == PackageManager.PERMISSION_GRANTED
+            ) {
+                Constants.showImageChooser(this)
+            } else {
+                ActivityCompat.requestPermissions(
+                    this,
+                    arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),
+                    Constants.READ_STORAGE_PERMISSION_CODE
+                )
+            }
+        }
+    }
 
-
-        //TESTTTTTTTTTT
-        var civ=findViewById<CircleImageView>(R.id.iv_board_image).setOnClickListener{
-            it:View->
-            val gallery=Intent(Intent.ACTION_PICK,MediaStore.Images.Media.INTERNAL_CONTENT_URI)
-            startActivityForResult(gallery,pickImage)
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == Constants.READ_STORAGE_PERMISSION_CODE) {
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Constants.showImageChooser(this)
+            } else {
+                Toast.makeText(
+                    this,
+                    "Hai negato i permessi per lo storage ma li puoi accettare dalle impostazioni del dispositivo",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
         }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if(resultCode== RESULT_OK && requestCode==pickImage){
-            imageUri=data?.data
-            println("uri $imageUri")
-            findViewById<CircleImageView>(R.id.iv_board_image).setImageURI(imageUri)
+        if (resultCode == Activity.RESULT_OK && requestCode == Constants.PICK_IMAGE_REQUEST_CODE && data!!.data != null) {
+            mSelectedImageFileUri = data.data
+            try {
+                Glide
+                    .with(this)
+                    .load(mSelectedImageFileUri)
+                    .centerCrop()
+                    .placeholder(R.drawable.ic_board_place_holder)
+                    .into(findViewById<ImageView>(R.id.iv_board_image))
+            } catch (e: IOException) {
+                e.printStackTrace()
+            }
         }
     }
 
@@ -78,6 +117,7 @@ class CreateBoardActivity : BaseActivity() {
             //Set a listener to respond to navigation events.
             //This listener will be called whenever the user clicks the navigation button at the start of the toolbar. An icon must be set for the navigation button to appear.
         }
+
     }
 
     private fun randomImage(): String {
@@ -95,8 +135,10 @@ class CreateBoardActivity : BaseActivity() {
         assignedUsersArrayList.add(FirestoreClass().getCurrentUserId())
 //        val board = Board(findViewById<AppCompatEditText>(R.id.et_board_name).text.toString(),
 //                randomImage(), userName, assignedUsersArrayList)
-        val board = Board(findViewById<AppCompatEditText>(R.id.et_board_name).text.toString(),
-                imageUri.toString(), userName, assignedUsersArrayList)
+        val board = Board(
+            findViewById<AppCompatEditText>(R.id.et_board_name).text.toString(),
+            mSelectedImageFileUri.toString(), userName, assignedUsersArrayList
+        )
         FirestoreClass().createBoard(this, board)
     }
 

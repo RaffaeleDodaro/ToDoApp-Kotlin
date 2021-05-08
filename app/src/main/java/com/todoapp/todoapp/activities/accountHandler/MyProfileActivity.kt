@@ -1,27 +1,105 @@
 package com.todoapp.todoapp.activities.accountHandler
 
+import android.Manifest
+import android.app.Activity
 import android.app.AlertDialog
+import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
+import android.provider.MediaStore
+import android.util.Log
+import android.view.View
+import android.webkit.MimeTypeMap
 import android.widget.*
 import androidx.appcompat.widget.Toolbar
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import com.bumptech.glide.Glide
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
 import com.todoapp.todoapp.R
 import com.todoapp.todoapp.activities.BaseActivity
 import com.todoapp.todoapp.activities.IntroActivity
 import com.todoapp.todoapp.firebase.FirestoreClass
 import com.todoapp.todoapp.models.User
+import com.todoapp.todoapp.utils.Constants
+import de.hdodenhof.circleimageview.CircleImageView
+import java.io.IOException
 
 
 class MyProfileActivity : BaseActivity() {
+
+    private var mSelectedImageFileUri: Uri?=null
+    private lateinit var mUserDetails:User
+    private var mProfileImageURL:String=""
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_my_profile)
+
+
+
         setupActionBar()
         FirestoreClass().loadUserData(this)
+        findViewById<CircleImageView>(R.id.iv_profile_user_image).setOnClickListener {
+            if(ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)
+            {
+                Constants.showImageChooser(this)
+            }
+            else
+            {
+                ActivityCompat.requestPermissions(
+                    this,
+                    arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),
+                    Constants.READ_STORAGE_PERMISSION_CODE
+                )
+            }
+        }
+
+
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if(requestCode== Constants.READ_STORAGE_PERMISSION_CODE)
+        {
+            if(grantResults.isNotEmpty() && grantResults[0]==PackageManager.PERMISSION_GRANTED)
+            {
+                Constants.showImageChooser(this)
+            }
+            else
+            {
+                Toast.makeText(this,"Hai negato i permessi per lo storage ma li puoi accettare dalle impostazioni del dispositivo",Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if(resultCode==Activity.RESULT_OK && requestCode == Constants.PICK_IMAGE_REQUEST_CODE && data!!.data !=null)
+        {
+            mSelectedImageFileUri=data.data
+            try {
+                Glide
+                    .with(this)
+                    .load(mSelectedImageFileUri)
+                    .centerCrop()
+                    .placeholder(R.drawable.ic_user_place_holder)
+                    .into(findViewById<ImageView>(R.id.iv_profile_user_image))
+            }catch(e: IOException)
+            {
+                e.printStackTrace()
+            }
+        }
     }
 
     private fun setupActionBar() {
@@ -39,14 +117,19 @@ class MyProfileActivity : BaseActivity() {
             //This listener will be called whenever the user clicks the navigation button at the start of the toolbar. An icon must be set for the navigation button to appear.
         }
         findViewById<Button>(R.id.btn_update).setOnClickListener {
-            updateData()
-            //Set a listener to respond to navigation events.
-            //This listener will be called whenever the user clicks the navigation button at the start of the toolbar. An icon must be set for the navigation button to appear.
+            if(mSelectedImageFileUri!=null) {
+                uploadUserImage()
+            }
+            else {
+                showProgressDialog(resources.getString(R.string.please_wait))
+                updateData()
+            }
         }
 
     }
 
     fun setUserDataInUI(user: User) {
+        mUserDetails=user
         /*
             Glide is a fast and efficient open source media management and image loading framework for
             Android that wraps media decoding, memory and disk caching, and resource pooling into a
@@ -57,25 +140,38 @@ class MyProfileActivity : BaseActivity() {
             .load(user.image)
             .centerCrop()
             .placeholder(R.drawable.ic_user_place_holder)
-            .into(findViewById<ImageView>(R.id.iv_user_image))
+            .into(findViewById<ImageView>(R.id.iv_profile_user_image))
         findViewById<TextView>(R.id.et_name).text = user.name
         findViewById<TextView>(R.id.et_email).text = user.email
     }
 
     private fun updateData() {
         //showProgressDialog(resources.getString(R.string.please_wait))
+        val name: String = findViewById<EditText>(R.id.et_name).text.toString()
         val email: String = findViewById<EditText>(R.id.et_email).text.toString()
         val password: String = findViewById<EditText>(R.id.et_password).text.toString()
+        var anyChanges:Boolean=false
 
-        if (email.isNotEmpty()) {
+        if (email.isNotEmpty() && email!= mUserDetails.email)
             alertDialogForChangeData(email, "")
 
-        }
-        if (password.isNotEmpty()) {
+        if (password.isNotEmpty())
             alertDialogForChangeData("", password)
+
+        val userHashMap=HashMap<String,Any>()
+
+        if(mProfileImageURL.isNotEmpty() && mProfileImageURL!=mUserDetails.image) {
+            userHashMap[Constants.IMAGE] = mProfileImageURL
+            anyChanges=true
         }
-//        if (!(user!!.displayName.equals(name, true)))
-//            FirestoreClass().editName(this, user.uid, name)
+
+        if(name != mUserDetails.name) {
+            userHashMap[Constants.NAME] = name
+            anyChanges=true
+        }
+
+        if(anyChanges)
+            FirestoreClass().updateUserProfileData(this,userHashMap)
     }
 
     private fun changePassword(password: String) {
@@ -96,9 +192,11 @@ class MyProfileActivity : BaseActivity() {
 
     private fun changeEmail(email: String) {
         val user = FirebaseAuth.getInstance().currentUser
+        println(" nuova email: $email")
         if (!(user!!.email.equals(email, true))) { //da tenere sott'occhio l'if
             user.verifyBeforeUpdateEmail(email)
                 .addOnCompleteListener { task ->
+                    println(" nuova email Nnnnnnnn: $email")
                     if (task.isSuccessful) {
                         // Email sent.
                         // User must click the email link before the email is updated.
@@ -127,11 +225,12 @@ class MyProfileActivity : BaseActivity() {
             dialogInterface.dismiss()
 
             if (email != "" && password != "") {
+                println(" nuova email: $email")
                 changeEmail(email)
                 changePassword(password)
-            } else if (email == "" && password != "")
+            } else if (password != "")
                 changePassword(password)
-            else if (email != "" && password == "")
+            else if (password == "")
                 changeEmail(email)
         }
         builder.setNegativeButton("No") { dialog, which ->
@@ -141,10 +240,56 @@ class MyProfileActivity : BaseActivity() {
     }
 
     fun editUserSuccessfully() {
+        hideProgressDialog()
         FirebaseAuth.getInstance().signOut()
         val intent = Intent(this, IntroActivity::class.java) //cambio activity
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
         startActivity(intent)
         finish()
     }
+
+    private fun uploadUserImage(){
+        showProgressDialog(resources.getString(R.string.please_wait))
+        if(mSelectedImageFileUri!=null)
+        {
+            val sRef:StorageReference=FirebaseStorage.getInstance().reference.child("USER_IMAGE"
+                    +System.currentTimeMillis()+"."+Constants.getFileExtension(this, mSelectedImageFileUri))
+
+            sRef.putFile(mSelectedImageFileUri!!).addOnSuccessListener{
+                taskSnapshot ->
+                Log.i(
+                    "Firebase Image URL",
+                    taskSnapshot.metadata!!.reference!!.downloadUrl.toString()
+                )
+
+                taskSnapshot.metadata!!.reference!!.downloadUrl.addOnSuccessListener {
+                    uri->
+                    Log.i("Url immagine scaricabile: ", uri.toString())
+                    mProfileImageURL=uri.toString()
+                    updateData()
+                }.addOnFailureListener{
+                    exception ->
+                    Toast.makeText(this@MyProfileActivity,exception.message,Toast.LENGTH_LONG).show()
+                    hideProgressDialog()
+                }
+            }
+            findViewById<Button>(R.id.btn_update).setOnClickListener {
+                if(mSelectedImageFileUri!=null)
+                {
+                    uploadUserImage()
+                }
+            }
+        }
+    }
+
+
+
+
+    fun profileUpdateSuccess()
+    {
+        hideProgressDialog()
+        setResult(Activity.RESULT_OK)
+        finish()
+    }
+
 }

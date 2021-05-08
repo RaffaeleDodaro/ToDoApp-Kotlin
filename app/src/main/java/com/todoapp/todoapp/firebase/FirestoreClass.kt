@@ -33,6 +33,22 @@ class FirestoreClass : BaseActivity() {
         }
     }
 
+
+    fun updateUserProfileData(activity:MyProfileActivity,userHashMap:HashMap<String,Any>)
+    {
+        mFireStore.collection(Constants.USERS).document(getCurrentUserId()).update(userHashMap)
+            .addOnSuccessListener {
+                Log.i(activity.javaClass.simpleName,"Profilo aggiornato correttamente!")
+                Toast.makeText(activity,"Profilo aggiornato correttamente!",Toast.LENGTH_LONG).show()
+                activity.profileUpdateSuccess()
+            }.addOnFailureListener{e->
+                activity.hideProgressDialog()
+                Log.i(activity.javaClass.simpleName,"Profilo non aggiornato")
+                Toast.makeText(activity,"Profilo non aggiornato",Toast.LENGTH_LONG).show()
+            }
+
+    }
+
     fun loadUserData(
         activity: Activity,
         readBoardList: Boolean = false
@@ -238,18 +254,6 @@ class FirestoreClass : BaseActivity() {
             }
             .addOnFailureListener { e ->
                 Log.e(activity.javaClass.simpleName, "Errore mentre modifico email utente.", e)
-            }
-    }
-
-    fun editName(activity: MyProfileActivity, idUser: String, name: String) {
-        mFireStore.collection(Constants.USERS)
-            .document(idUser)
-            .update(Constants.NAME, name)
-            .addOnSuccessListener {
-                activity.editUserSuccessfully()
-            }
-            .addOnFailureListener { e ->
-                Log.e(activity.javaClass.simpleName, "Errore mentre modifico nome utente", e)
             }
     }
 

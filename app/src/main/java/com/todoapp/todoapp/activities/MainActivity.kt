@@ -32,6 +32,7 @@ import java.io.*
 
 class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedListener {
 
+
     private lateinit var mUserName: String
 
     /**
@@ -132,6 +133,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
             doubleBackToExit()
     }
 
+
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId)//simile allo switch
         {
@@ -195,8 +197,13 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
             Log.e("Error", "Error")
 
         if (requestCode == IMPORT_FILE && resultCode == RESULT_OK) {
-            val uri: Uri? = if (attr.data != null) data!!.data else null
+            val uri: Uri? = data!!.data
             readText(uri)
+        }
+        else if(resultCode== Activity.RESULT_OK && requestCode == MY_PROFILE_REQUEST_CODE)
+        {
+            FirestoreClass().loadUserData(this)
+
         }
     }
 
