@@ -1,9 +1,6 @@
 package com.todoapp.todoapp.adapters
 
-import android.app.AlertDialog
 import android.content.Context
-import android.content.DialogInterface
-import android.content.res.Resources
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,11 +9,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.todoapp.todoapp.R
 import com.todoapp.todoapp.models.Card
 
-// TODO (Step 3: Create an adapter class for cards list.)
-// START
+// The open annotation on a class is the opposite of Java's final:
+// it allows others to inherit from this class.
 open class CardListItemsAdapter(
-        private val context: Context,
-        private var list: ArrayList<Card>
+    private val context: Context,
+    private var list: ArrayList<Card>
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private var onClickListener: OnClickListener? = null
@@ -28,13 +25,18 @@ open class CardListItemsAdapter(
      * {@link ViewHolder} and initializes some private fields to be used by RecyclerView.
      */
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-
+        /*
+            This new ViewHolder should be constructed with a new View that can represent the items of the given
+            type. You can either create a new View manually or inflate it from an XML layout file.
+            The new ViewHolder will be used to display items of the adapter using onBindViewHolder(ViewHolder,
+            int, List). Since it will be re-used to display
+        */
         return MyViewHolder(
-                LayoutInflater.from(context).inflate(
-                        R.layout.item_card,
-                        parent,
-                        false
-                )
+            LayoutInflater.from(context).inflate(
+                R.layout.item_card,
+                parent,
+                false
+            )
         )
     }
 
@@ -54,9 +56,8 @@ open class CardListItemsAdapter(
         if (holder is MyViewHolder) {
 
             holder.itemView.findViewById<TextView>(R.id.tv_card_name).text = model.name
-            holder.itemView.setOnClickListener{
-                if(onClickListener!=null)
-                {
+            holder.itemView.setOnClickListener {
+                if (onClickListener != null) {
                     onClickListener!!.onClick(position)
                 }
             }
@@ -89,4 +90,3 @@ open class CardListItemsAdapter(
      */
     class MyViewHolder(view: View) : RecyclerView.ViewHolder(view)
 }
-// END}

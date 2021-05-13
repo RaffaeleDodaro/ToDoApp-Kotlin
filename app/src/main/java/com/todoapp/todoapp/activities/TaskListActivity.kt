@@ -1,7 +1,6 @@
 package com.todoapp.todoapp.activities
 
-import Board
-import android.R.attr
+import com.todoapp.todoapp.models.Board
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.Intent
@@ -27,6 +26,8 @@ import java.util.concurrent.CopyOnWriteArrayList
 
 class TaskListActivity : BaseActivity() {
 
+    val CARD_DETAILS_REQUEST_CODE: Int = 14
+    val EDIT_BOARD_REQUEST_CODE: Int = 999
     //variabili globali che vengono inizializzate piu' tardi
     private lateinit var boardDetails: Board
     private lateinit var boardDocumentId: String
@@ -75,7 +76,7 @@ class TaskListActivity : BaseActivity() {
         val intent = Intent(this@TaskListActivity, EditBoardActivity::class.java)
         intent.putExtra(Constants.TITLE, boardDetails.name)
         intent.putExtra(Constants.DOCUMENT_ID, boardDetails.documentId)
-        startActivityForResult(intent, TaskListActivity.EDIT_BOARD_REQUEST_CODE)
+        startActivityForResult(intent, EDIT_BOARD_REQUEST_CODE)
     }
 
     fun boardDetails(board: Board) {
@@ -127,7 +128,8 @@ class TaskListActivity : BaseActivity() {
         super.onActivityResult(requestCode, resultCode, data)
 
         if (resultCode == Activity.RESULT_OK
-                && requestCode == CARD_DETAILS_REQUEST_CODE) {
+            && requestCode == CARD_DETAILS_REQUEST_CODE
+        ) {
             showProgressDialog(resources.getString(R.string.please_wait))
             FirestoreClass().getBoardDetails(this, boardDocumentId)
         } else if (requestCode == REQUEST_SAF) {
@@ -195,21 +197,22 @@ class TaskListActivity : BaseActivity() {
 
         val cardAssignedUsersList: ArrayList<String> = ArrayList()
         cardAssignedUsersList.add(FirestoreClass().getCurrentUserId())
-        val card = Card(cardName, FirestoreClass().getCurrentUserId(),
-                cardAssignedUsersList)
+        val card = Card(
+            cardName, FirestoreClass().getCurrentUserId(),
+            cardAssignedUsersList
+        )
 
         val cardsList = boardDetails.taskList[position].cards
         cardsList.add(card)
 
         val task = Task(
-                boardDetails.taskList[position].title,
-                boardDetails.taskList[position].createdBy,
-                cardsList
+            boardDetails.taskList[position].title,
+            boardDetails.taskList[position].createdBy,
+            cardsList
         )
         boardDetails.taskList[position] = task
         showProgressDialog(resources.getString(R.string.please_wait))
         FirestoreClass().addUpdateTaskList(this@TaskListActivity, boardDetails)
-
     }
 
     fun cardDetails(taskListPosition: Int, cardPosition: Int) {
@@ -222,8 +225,8 @@ class TaskListActivity : BaseActivity() {
 
     private fun exportData() {
         val intent = Intent(Intent.ACTION_CREATE_DOCUMENT)
-                .setType("text/plain")
-                .addCategory(Intent.CATEGORY_OPENABLE)
+            .setType("text/plain")
+            .addCategory(Intent.CATEGORY_OPENABLE)
         intent.putExtra(Intent.EXTRA_TITLE, boardDetails.name + ".txt");
 
         startActivityForResult(intent, REQUEST_SAF)
@@ -231,9 +234,9 @@ class TaskListActivity : BaseActivity() {
 
     fun importBackup(reader: BufferedReader) {
         //showProgressDialog("Attendi")
-        var array = CopyOnWriteArrayList<String>()
+        val array = CopyOnWriteArrayList<String>()
         while (reader.ready()) {
-            var line: String = reader.readLine()
+            val line: String = reader.readLine()
             array.add(line)
         }
 
@@ -275,58 +278,59 @@ class TaskListActivity : BaseActivity() {
 
 
         mFireStore.collection(Constants.BOARDS)
-                // A where array query as we want the list of the board in which the user is assigned. So here you can pass the current user id.
-                .whereArrayContains(Constants.ASSIGNED_TO, FirestoreClass().getCurrentUserId())
-                .get() // Will get the documents snapshots.
-                .addOnSuccessListener { document ->
+            // A where array query as we want the list of the board in which the user is assigned. So here you can pass the current user id.
+            .whereArrayContains(Constants.ASSIGNED_TO, FirestoreClass().getCurrentUserId())
+            .get() // Will get the documents snapshots.
+            .addOnSuccessListener { document ->
 
-                    for (i in document.documents) {
-                        val board2 = i.toObject(Board::class.java)!!
-                        if (board2.name == board.name) {
-                            board2.documentId = i.id
-                            FirestoreClass().getBoardDetails(this, board2.documentId)
-                            var j = -1
-                            var nomeTask: String = ""
-                            var nomeCreatoreTask: String = ""
-                            var nomeCard: String = ""
-                            var nomeCreatoreCard: String = ""
-                            for (i in array) {
-                                if (i.startsWith("[")) {
-                                    j = -1
-                                    nomeTask = deleteFirstCharacter(i)
-                                }
+                for (i in document.documents) {
+                    val board2 = i.toObject(Board::class.java)!!
+                    if (board2.name == board.name) {
+                        board2.documentId = i.id
+                        FirestoreClass().getBoardDetails(this, board2.documentId)
+                        var j = -1
+                        var nomeTask: String = ""
+                        var nomeCreatoreTask: String = ""
+                        var nomeCard: String = ""
+                        var nomeCreatoreCard: String = ""
+                        for (i in array) {
+                            if (i.startsWith("[")) {
+                                j = -1
+                                nomeTask = deleteFirstCharacter(i)
+                            }
 
-                                if (i.startsWith("]"))
-                                    nomeCreatoreTask = deleteFirstCharacter(i)
+                            if (i.startsWith("]"))
+                                nomeCreatoreTask = deleteFirstCharacter(i)
 
-                                if (i.startsWith("{")) {
-                                    nomeCard = deleteFirstCharacter(i)
-                                    j++
-                                }
+                            if (i.startsWith("{")) {
+                                nomeCard = deleteFirstCharacter(i)
+                                j++
+                            }
 
-                                if (i.startsWith("}"))
-                                    nomeCreatoreCard = deleteFirstCharacter(i)
+                            if (i.startsWith("}"))
+                                nomeCreatoreCard = deleteFirstCharacter(i)
 
-                                if (nomeTask != "" && nomeCreatoreTask != "" &&
-                                        nomeCard != "" && nomeCreatoreCard != "") {
+                            if (nomeTask != "" && nomeCreatoreTask != "" &&
+                                nomeCard != "" && nomeCreatoreCard != ""
+                            ) {
 
-                                    println("DENTRO IF nome task $nomeTask $nomeCreatoreTask")
+                                println("DENTRO IF nome task $nomeTask $nomeCreatoreTask")
 
-                                    var task = Task(nomeTask, nomeCreatoreTask)
-                                    board2.taskList.add(0, task)
+                                var task = Task(nomeTask, nomeCreatoreTask)
+                                board2.taskList.add(0, task)
 
 
-                                    val taskListHashMap = HashMap<String, Any>()
-                                    taskListHashMap[Constants.TASK_LIST] = board2.taskList
+                                val taskListHashMap = HashMap<String, Any>()
+                                taskListHashMap[Constants.TASK_LIST] = board2.taskList
 
-                                    mFireStore.collection(Constants.BOARDS)
-                                            .document(board2.documentId)
-                                            .update(taskListHashMap)
-                                            .addOnSuccessListener {
-                                                println("task creata correttamente")
-                                            }
-                                            .addOnFailureListener { e ->
-                                            }
+                                mFireStore.collection(Constants.BOARDS)
+                                    .document(board2.documentId)
+                                    .update(taskListHashMap)
+                                    .addOnSuccessListener {
+                                        println("task creata correttamente")
+                                    }
+                                    .addOnFailureListener { e ->
+                                    }
 
 
 /*
@@ -366,15 +370,15 @@ class TaskListActivity : BaseActivity() {
                                             }
 
 */
-                                    //nomeTask = ""
-                                }
+                                //nomeTask = ""
                             }
                         }
                     }
                 }
+            }
 
-                .addOnFailureListener { e ->
-                }
+            .addOnFailureListener { e ->
+            }
     }
 
     private fun deleteFirstCharacter(stringa: String): String {
@@ -393,17 +397,13 @@ class TaskListActivity : BaseActivity() {
         builder.setMessage("Sei sicuro di voler cancellare $title?")
         builder.setIcon(android.R.drawable.ic_dialog_alert)
         builder.setPositiveButton("Si") { dialogInterface, which ->
-            dialogInterface.dismiss()
+            dialogInterface.dismiss() //fa scomparire la finestra
             FirestoreClass().deleteBoard(this@TaskListActivity, boardDetails)
         }
         builder.setNegativeButton("No") { dialog, which ->
-            Toast.makeText(applicationContext, "Hai annullato l'eliminazione", Toast.LENGTH_SHORT).show()
+            Toast.makeText(applicationContext, "Hai annullato l'eliminazione", Toast.LENGTH_SHORT)
+                .show()
         }
         builder.create().show()
-    }
-
-    companion object {
-        const val CARD_DETAILS_REQUEST_CODE: Int = 14
-        const val EDIT_BOARD_REQUEST_CODE: Int = 999
     }
 }

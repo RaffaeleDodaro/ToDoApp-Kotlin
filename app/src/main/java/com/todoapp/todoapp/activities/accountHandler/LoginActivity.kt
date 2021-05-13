@@ -38,7 +38,6 @@ class LoginActivity : BaseActivity() {
 
         setupActionBar()
 
-
         val signInButton = findViewById<SignInButton>(R.id.btn_sign_inGoogle)
         signInButton.setSize(SignInButton.SIZE_STANDARD)
 
@@ -49,7 +48,6 @@ class LoginActivity : BaseActivity() {
             if (validateForm(email, password)) {
                 showProgressDialog(resources.getString(R.string.please_wait))
                 login(email, password)
-
             }
         }
 
@@ -60,49 +58,54 @@ class LoginActivity : BaseActivity() {
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso)
 
         findViewById<SignInButton>(R.id.btn_sign_inGoogle).setOnClickListener {
-
             signInWithGoogle()
-
         }
         auth = Firebase.auth
 
         findViewById<Button>(R.id.btn_resetpassword).setOnClickListener {
             val email: String = findViewById<TextView>(R.id.et_emailSignIn).text.toString()
-            if(email.isNotEmpty())
-            {
+            if (email.isNotEmpty()) {
                 auth.sendPasswordResetEmail(email)
                     .addOnCompleteListener { task ->
                         if (task.isSuccessful)
-                            Toast.makeText(this@LoginActivity, "Dai un'occhiata alla tua email per completare il reset", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(
+                                this@LoginActivity,
+                                "Dai un'occhiata alla tua email per completare il reset",
+                                Toast.LENGTH_SHORT
+                            ).show()
                         else
-                            Toast.makeText(this@LoginActivity, "Account non trovato!", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(
+                                this@LoginActivity,
+                                "Account non trovato!",
+                                Toast.LENGTH_SHORT
+                            ).show()
                     }
-            }
-            else
+            } else
                 showErrorSnackBar("Inserisci una email!")
         }
-
     }
-
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
         if (requestCode == RC_SIGN_IN) {
             val task = GoogleSignIn.getSignedInAccountFromIntent(data)
             try {
-                // Google Sign In was successful, authenticate with Firebase
                 val account = task.getResult(ApiException::class.java)!!
-                //if(!userExist(account.email!!)){
                 Log.d(TAG, "firebaseAuthWithGoogle: " + account.id)
                 firebaseAuthWithGoogle(account.idToken!!)
-                //}
             } catch (e: ApiException) {
-                // Google Sign In failed, update UI appropriately
                 Log.w(TAG, "Google sign in failed", e)
             }
         }
+    }
+
+    private fun signInWithGoogle() {
+        val signInIntent = mGoogleSignInClient.signInIntent
+        startActivityForResult(
+            signInIntent, RC_SIGN_IN
+        )
+        //RC_SIGN_IN = 9001
     }
 
     private fun updateUI(user: FirebaseUser?) {
@@ -118,27 +121,17 @@ class LoginActivity : BaseActivity() {
         auth.signInWithCredential(credential)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
-                    // Sign in success, update UI with the signed-in user's information
                     Log.d(TAG, "signInWithCredential:success")
                     val user = auth.currentUser
                     showProgressDialog(getString(R.string.please_wait))
                     FirestoreClass().loadUserData(this)
                     updateUI(user)
                 } else {
-                    // If sign in fails, display a message to the user.
                     Log.w(TAG, "signInWithCredential:failure", task.exception)
                     updateUI(null)
                 }
             }
     }
-
-    private fun signInWithGoogle() {
-        val signInIntent = mGoogleSignInClient.signInIntent
-        startActivityForResult(
-            signInIntent, RC_SIGN_IN
-        )
-    }
-
 
     private fun validateForm(email: String, password: String): Boolean {
         //when equivale allo switch
@@ -161,14 +154,13 @@ class LoginActivity : BaseActivity() {
         FirebaseAuth.getInstance().signInWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    // Calling the FirestoreClass signInUser function to get the data of user from database.
                     val user = FirebaseAuth.getInstance().currentUser
-                    if (user!!.isEmailVerified)
+                    if (user!!.isEmailVerified)// !! vuol dire che user NON deve essere nullo
                         FirestoreClass().loadUserData(this)
                     else {
                         Toast.makeText(
                             this,
-                            "Non hai verificato l'account. Controlla l'email", // !! vuol dire che task NON deve essere nullo
+                            "Non hai verificato l'account. Controlla l'email",
                             Toast.LENGTH_LONG
                         ).show()
                         hideProgressDialog()
@@ -176,14 +168,13 @@ class LoginActivity : BaseActivity() {
                 } else {
                     Toast.makeText(
                         this,
-                        "Email/password non corretti", // !! vuol dire che task NON deve essere nullo
+                        "Email/password non corretti",
                         Toast.LENGTH_LONG
                     ).show()
                     hideProgressDialog()
                 }
             }
     }
-
 
     //aggiunge una freccia alla schermata sign in che permette di tornare indietro
     private fun setupActionBar() {
@@ -196,7 +187,7 @@ class LoginActivity : BaseActivity() {
         findViewById<Toolbar>(R.id.toolbar_sign_in_activity).setNavigationOnClickListener { onBackPressed() }
     }
 
-    fun signInSuccess(user: User) {
+    fun signInSuccess() {
         hideProgressDialog()
         startActivity(Intent(this, MainActivity::class.java))
         finish() // finisce l'attivita'

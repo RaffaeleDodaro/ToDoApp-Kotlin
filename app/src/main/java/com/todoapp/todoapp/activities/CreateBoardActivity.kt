@@ -1,16 +1,12 @@
 package com.todoapp.todoapp.activities
 
-import Board
+import com.todoapp.todoapp.models.Board
 import android.Manifest
 import android.app.Activity
-import android.app.AlertDialog
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
-import android.provider.MediaStore
-import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
@@ -19,15 +15,12 @@ import androidx.appcompat.widget.AppCompatEditText
 import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.core.view.isEmpty
 import com.bumptech.glide.Glide
-import com.google.android.material.textfield.TextInputLayout
 import com.todoapp.todoapp.R
 import com.todoapp.todoapp.firebase.FirestoreClass
 import com.todoapp.todoapp.utils.Constants
 import de.hdodenhof.circleimageview.CircleImageView
 import java.io.IOException
-import kotlin.random.Random
 
 class CreateBoardActivity : BaseActivity() {
 
@@ -63,6 +56,7 @@ class CreateBoardActivity : BaseActivity() {
                     arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),
                     Constants.READ_STORAGE_PERMISSION_CODE
                 )
+                //fa apparire il rettangolino dove l'utente sceglie se concedere i permessi
             }
         }
     }
@@ -117,24 +111,12 @@ class CreateBoardActivity : BaseActivity() {
             //Set a listener to respond to navigation events.
             //This listener will be called whenever the user clicks the navigation button at the start of the toolbar. An icon must be set for the navigation button to appear.
         }
-
-    }
-
-    private fun randomImage(): String {
-        val images = ArrayList<String>()
-        images.add("https://image.flaticon.com/icons/png/512/1567/1567073.png")
-        images.add("https://icons.iconarchive.com/icons/cornmanthe3rd/squareplex/512/Utilities-tasks-icon.png")
-        images.add("https://icons.iconarchive.com/icons/cornmanthe3rd/metronome/256/Utilities-tasks-icon.png")
-        images.add("https://www.kpcommunication.it/wordpress/wp-content/uploads/2018/02/to-do-list-png-big-image-png-1923.png")
-        images.add("https://icons.iconarchive.com/icons/oxygen-icons.org/oxygen/256/Actions-view-calendar-tasks-icon.png")
-        return images.get(Random.nextInt(0, images.size - 1))
     }
 
     private fun createBoard() {
         val assignedUsersArrayList: ArrayList<String> = ArrayList()
         assignedUsersArrayList.add(FirestoreClass().getCurrentUserId())
-//        val board = Board(findViewById<AppCompatEditText>(R.id.et_board_name).text.toString(),
-//                randomImage(), userName, assignedUsersArrayList)
+
         val board = Board(
             findViewById<AppCompatEditText>(R.id.et_board_name).text.toString(),
             mSelectedImageFileUri.toString(), userName, assignedUsersArrayList

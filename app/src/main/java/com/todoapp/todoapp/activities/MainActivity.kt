@@ -1,7 +1,6 @@
 package com.todoapp.todoapp.activities
 
-import Board
-import android.R.attr
+import com.todoapp.todoapp.models.Board
 import android.app.Activity
 import android.content.ContentResolver
 import android.content.Intent
@@ -32,23 +31,16 @@ import java.io.*
 
 class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedListener {
 
+    //A unique code for starting the activity for result
+    val MY_PROFILE_REQUEST_CODE: Int = 11
+
+    //A code for starting the create board activity for result
+    val CREATE_BOARD_REQUEST_CODE: Int = 12
+    val DELETE_BOARD_REQUEST_CODE: Int = 13
+
+    val IMPORT_FILE = 42
 
     private lateinit var mUserName: String
-
-    /**
-     * A companion object to declare the constants.
-     */
-    companion object {
-        //A unique code for starting the activity for result
-        const val MY_PROFILE_REQUEST_CODE: Int = 11
-
-        //A code for starting the create board activity for result
-        const val CREATE_BOARD_REQUEST_CODE: Int = 12
-        const val DELETE_BOARD_REQUEST_CODE: Int = 13
-
-        const val IMPORT_FILE = 42
-
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -56,9 +48,11 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         setupActionBar()
         findViewById<NavigationView>(R.id.nav_view).setNavigationItemSelectedListener(this) //Set a listener that will be notified when a menu item is selected.
 
-        // Get the current logged in user details.
         showProgressDialog(resources.getString(R.string.please_wait))
-        FirestoreClass().loadUserData(this@MainActivity, true)
+        FirestoreClass().loadUserData(
+            this@MainActivity,
+            true
+        )// Get the current logged in user details.
 
         val fab = findViewById<FloatingActionButton>(R.id.fab_create_board)
         fab.setOnClickListener {
@@ -73,32 +67,37 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         val rv_boards_list = findViewById<RecyclerView>(R.id.rv_boards_list)
         if (boardsList.size > 0) {
             rv_boards_list.visibility = View.VISIBLE
-            findViewById<TextView>(R.id.tv_no_boards_available).visibility = View.GONE //con gone la tv diventa invisibile
-            findViewById<ImageView>(R.id.no_job).visibility = View.GONE //con gone diventa invisibile
+            findViewById<TextView>(R.id.tv_no_boards_available).visibility =
+                View.GONE //con gone la tv diventa invisibile
+            findViewById<ImageView>(R.id.no_job).visibility =
+                View.GONE //con gone diventa invisibile
 
 
-            rv_boards_list.layoutManager = LinearLayoutManager(this)
-            rv_boards_list.setHasFixedSize(true)
+            rv_boards_list.layoutManager =
+                LinearLayoutManager(this) //Creates a vertical LinearLayoutManager
 
+            rv_boards_list.setHasFixedSize(true) // RecyclerView can perform several optimizations
+            // if it can know in advance that RecyclerView's size is not affected by the adapter
+            // contents.
 
             // Create an instance of BoardItemsAdapter and pass the boardList to it.
             val adapter = BoardItemsAdapter(this, boardsList)
             rv_boards_list.adapter = adapter
 
-
             //click event for boards item and launch the TaskListActivity
             adapter.setOnClickListener(object :
-                    BoardItemsAdapter.OnClickListener {
-                override fun onClick(position: Int, model: Board) {
-                    val intent = Intent(this@MainActivity, TaskListActivity::class.java)
-                    intent.putExtra(Constants.DOCUMENT_ID, model.documentId)
-                    startActivity(intent)
-                }
+                BoardItemsAdapter.OnClickListener {
+                    override fun onClick(position: Int, model: Board) {
+                        val intent = Intent(this@MainActivity, TaskListActivity::class.java)
+                        intent.putExtra(Constants.DOCUMENT_ID, model.documentId)
+                        startActivity(intent)
+                    }
             })
         } else {
-            rv_boards_list.visibility = View.GONE
+            rv_boards_list.visibility = View.GONE // con gone diventa invisibile
             findViewById<TextView>(R.id.tv_no_boards_available).visibility = View.VISIBLE
-            findViewById<ImageView>(R.id.no_job).visibility = View.VISIBLE //con gone diventa invisibile
+            findViewById<ImageView>(R.id.no_job).visibility =
+                View.VISIBLE
         }
     }
 
@@ -113,18 +112,21 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
     }
 
     private fun showDrawer() {
-        val drawer = findViewById<DrawerLayout>(R.id.drawer_layout)   //DrawerLayout acts as a top-level container for window
+        val drawer =
+            findViewById<DrawerLayout>(R.id.drawer_layout)   //DrawerLayout acts as a top-level container for window
         // content that allows for interactive "drawer" views
         // to be pulled out from one or both vertical edges of the window
 
         if (drawer.isDrawerOpen(GravityCompat.START))
-            drawer.closeDrawer(GravityCompat.START)
+            drawer.closeDrawer(GravityCompat.START) // Push object to x-axis position at the start of its container,
+                                                    // not changing its size.
         else
             drawer.openDrawer(GravityCompat.START)
     }
 
     override fun onBackPressed() {
-        val drawer = findViewById<DrawerLayout>(R.id.drawer_layout) //DrawerLayout acts as a top-level container for window
+        val drawer =
+            findViewById<DrawerLayout>(R.id.drawer_layout) //DrawerLayout acts as a top-level container for window
         // content that allows for interactive "drawer" views
         // to be pulled out from one or both vertical edges of the window
         if (drawer.isDrawerOpen(GravityCompat.START))
@@ -138,7 +140,10 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         when (item.itemId)//simile allo switch
         {
             R.id.nav_my_profile -> { //se e' stato premuto il mio profilo
-                startActivityForResult(Intent(this, MyProfileActivity::class.java), MY_PROFILE_REQUEST_CODE)
+                startActivityForResult(
+                    Intent(this, MyProfileActivity::class.java),
+                    MY_PROFILE_REQUEST_CODE
+                )
             }
 
             R.id.nav_log_out -> {//se e' stato premuto il logout
@@ -164,20 +169,21 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
     }
 
     fun updateNavigationUserDetails(user: User, readBoardList: Boolean) {
+        hideProgressDialog()
+        mUserName = user.name
+
         /*
             Glide is a fast and efficient open source media management and image loading framework for
             Android that wraps media decoding, memory and disk caching, and resource pooling into a
             simple and easy to use interface.
         */
-        hideProgressDialog()
-        mUserName = user.name
-
         Glide
-                .with(this)
-                .load(user.image)
-                .centerCrop()
-                .placeholder(R.drawable.ic_user_place_holder)
-                .into(findViewById<ImageView>(R.id.nav_user_image_profile))
+            .with(this)
+            .load(user.image)
+            .centerCrop()
+            .placeholder(R.drawable.ic_user_place_holder)
+            .into(findViewById<ImageView>(R.id.nav_user_image_profile))
+
         findViewById<TextView>(R.id.tv_username).text = user.name
         if (readBoardList) {
             showProgressDialog(resources.getString(R.string.please_wait))
@@ -187,6 +193,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
+
         if (resultCode == Activity.RESULT_OK && requestCode == MY_PROFILE_REQUEST_CODE)
             FirestoreClass().loadUserData(this)
         else if (resultCode == Activity.RESULT_OK && requestCode == CREATE_BOARD_REQUEST_CODE)
@@ -199,30 +206,25 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         if (requestCode == IMPORT_FILE && resultCode == RESULT_OK) {
             val uri: Uri? = data!!.data
             readText(uri)
-        }
-        else if(resultCode== Activity.RESULT_OK && requestCode == MY_PROFILE_REQUEST_CODE)
-        {
+        } else if (resultCode == Activity.RESULT_OK && requestCode == MY_PROFILE_REQUEST_CODE) {
             FirestoreClass().loadUserData(this)
-
         }
     }
 
     private fun readText(uri: Uri?) {
-        var cr: ContentResolver = contentResolver
+        val cr: ContentResolver = contentResolver
         if (uri != null) {
             cr.takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION)
             var inputStream: InputStream? = null
             inputStream = cr.openInputStream(uri)
-            var reader:BufferedReader= BufferedReader(InputStreamReader(inputStream))
+            val reader: BufferedReader = BufferedReader(InputStreamReader(inputStream))
             TaskListActivity().importBackup(reader)
-            if (inputStream != null) {
+            if (inputStream != null)
                 closeQuietlyIS(inputStream)
-            }
         }
     }
 
     private fun closeQuietlyIS(closeable: AutoCloseable) {
-        if (closeable != null)
-            closeable.close();
+        closeable.close();
     }
 }

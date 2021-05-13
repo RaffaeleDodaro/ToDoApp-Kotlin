@@ -30,16 +30,15 @@ class EditBoardActivity : BaseActivity() {
         findViewById<EditText>(R.id.et_board_name_edit).setText(oldTitle)
 
         findViewById<Button>(R.id.btn_edit).setOnClickListener {
-            val newName:String = findViewById<EditText>(R.id.et_board_name_edit).text.toString()
-            if(newName != ""){
+            val newName: String = findViewById<EditText>(R.id.et_board_name_edit).text.toString()
+            if (newName != "") {
                 showProgressDialog(resources.getString(R.string.please_wait))
                 editBoard(newName)
-            }
-            else Toast.makeText(this,"Inserisci il nome", Toast.LENGTH_SHORT).show()
+            } else Toast.makeText(this, "Inserisci il nome", Toast.LENGTH_SHORT).show()
         }
     }
 
-    private fun editBoard(newName:String) {
+    private fun editBoard(newName: String) {
         FirestoreClass().editBoardName(this, document_id, newName)
     }
 
@@ -65,5 +64,4 @@ class EditBoardActivity : BaseActivity() {
         hideProgressDialog()
         finish()
     }
-
 }

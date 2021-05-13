@@ -1,6 +1,6 @@
 package com.todoapp.todoapp.adapters
 
-import Board
+import com.todoapp.todoapp.models.Board
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
@@ -10,6 +10,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.todoapp.todoapp.R
 
+// The open annotation on a class is the opposite of Java's final:
+// it allows others to inherit from this class.
 open class BoardItemsAdapter(private val context:Context,
                              private var list:ArrayList<Board>):
     RecyclerView.Adapter<RecyclerView.ViewHolder>()
@@ -18,9 +20,14 @@ open class BoardItemsAdapter(private val context:Context,
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
             return MyViewHolder(LayoutInflater.from(context).inflate(R.layout.item_board,parent,false))
+            //A ViewHolder describes an item view and metadata about its place within the RecyclerView
         }
 
         override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+            // onBindViewHolder = Called by RecyclerView to display the data at the specified position.
+            // This method should update the contents of the RecyclerView.ViewHolder.itemView to
+            // reflect the item at the given position.
+
             val model = list[position]
 
             if (holder is MyViewHolder) {

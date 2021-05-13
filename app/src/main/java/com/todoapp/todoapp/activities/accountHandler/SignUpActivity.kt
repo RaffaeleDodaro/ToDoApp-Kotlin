@@ -27,20 +27,19 @@ import com.todoapp.todoapp.activities.MainActivity
 import com.todoapp.todoapp.firebase.FirestoreClass
 import com.todoapp.todoapp.models.User
 
-
 class SignUpActivity : BaseActivity() {
     private lateinit var mGoogleSignInClient: GoogleSignInClient
+    private lateinit var auth: FirebaseAuth
+
     private val RC_SIGN_IN = 9001
     private val TAG = "GoogleActivity"
-    private lateinit var auth: FirebaseAuth
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_sign_up)
 
-
         val signInButton = findViewById<SignInButton>(R.id.btn_sign_upGoogle)
         signInButton.setSize(SignInButton.SIZE_STANDARD)
-
 
         //nascondo la statusbar
         @Suppress("DEPRECATION")
@@ -61,14 +60,12 @@ class SignUpActivity : BaseActivity() {
             .build()
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso)
 
-
         setupActionBar()
 
-
         findViewById<SignInButton>(R.id.btn_sign_upGoogle).setOnClickListener {
-
             signUpWithGoogle()
         }
+
         findViewById<Button>(R.id.btn_sign_up).setOnClickListener {
             registerUser()
         }
@@ -118,14 +115,13 @@ class SignUpActivity : BaseActivity() {
                         task.result!!.user!! // !! lancia un'eccezione se result o user sono nulli
                     val user2 = User(
                         firebaseUser.uid,
-                        user.displayName,
-                        user.email
+                        user!!.displayName!!,
+                        user.email!!
                     ) // uid Returns a string used to uniquely identify your user in your Firebase project's
 
                     FirestoreClass().registerUser(this, user2)
                     updateUI(user)
                 } else {
-                    // If sign in fails, display a message to the user.
                     Log.w(TAG, "signUpWithCredential:failure", task.exception)
                     updateUI(null)
                 }
@@ -148,9 +144,7 @@ class SignUpActivity : BaseActivity() {
             actionBar.setHomeAsUpIndicator(R.drawable.ic_black_color_back_24dp)
         }
         findViewById<Toolbar>(R.id.toolbar_sign_in_activity).setNavigationOnClickListener { onBackPressed() }
-
     }
-
 
     private fun validateForm(name: String, email: String, password: String): Boolean {
         //when equivale allo switch
@@ -182,6 +176,7 @@ class SignUpActivity : BaseActivity() {
             .trim() //trim ritorna una stringa senza spazi
         val email: String = findViewById<TextView>(R.id.et_email).text.toString().trim()
         val password: String = findViewById<TextView>(R.id.et_password).text.toString()
+
         if (validateForm(name, email, password)) {
             showProgressDialog(resources.getString(R.string.please_wait))
             FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, password)
@@ -206,7 +201,11 @@ class SignUpActivity : BaseActivity() {
     }
 
     fun userRegisteredSuccess() {
-        Toast.makeText(this, "Ti sei registrato correttamente. Controlla l'email", Toast.LENGTH_LONG).show()
+        Toast.makeText(
+            this,
+            "Ti sei registrato correttamente. Controlla l'email",
+            Toast.LENGTH_LONG
+        ).show()
 
         hideProgressDialog()
         finish()
