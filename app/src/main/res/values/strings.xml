@@ -42,21 +42,20 @@
 
     <string name="no_boards_are_available"> Non ci sono bacheche disponibili</string>
 
-    <string name="action_add_list">Aggiungi lista</string>
-    <string name="hint_list_name">Nome lista</string>
-    <string name="action_add_card">Aggiungi carta</string>
-    <string name="hint_card_name">Nome carta</string>
-    <string name="add_list">Aggiungi lista</string>
+    <string name="action_add_activity">Aggiungi attività</string>
+    <string name="hint_activity_name">Nome attività</string>
+    <string name="action_add_subactivity">Aggiungi sotto-attività</string>
+    <string name="hint_subactivity_name">Nome sotto-attività</string>
+    <string name="add_activity">Aggiungi attività</string>
 
-    <string name="delete_card">Cancella carta</string>
+    <string name="delete_subactivity">Cancella sotto-attività</string>
 
-    <string name="confirmation_message_to_delete_card">Sei sicuro di voler eliminare \'%1$s\'?</string>
+    <string name="confirmation_message_to_delete_subactivity">Sei sicuro di voler eliminare \'%1$s\'?</string>
     <string name="alert">Attenzione!</string>
     <string name="yes">Si</string>
     <string name="no">No</string>
 
 
-    <string name="motivational_phrase">Frase motivazionale</string>
     <string name="add_board_image">Add board image</string>
     <string name="this_is_custom_toast">Prova Toast</string>
 </resources>

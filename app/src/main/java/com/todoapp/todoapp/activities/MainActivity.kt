@@ -36,9 +36,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
 
     //A code for starting the create board activity for result
     val CREATE_BOARD_REQUEST_CODE: Int = 12
-    val DELETE_BOARD_REQUEST_CODE: Int = 13
 
-    val IMPORT_FILE = 42
 
     private lateinit var mUserName: String
 
@@ -154,15 +152,6 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
                 startActivity(intent)
                 finish()
             }
-
-            R.id.nav_import -> {//se e' stato premuto il per importa una todo list
-
-                val intent = Intent(Intent.ACTION_OPEN_DOCUMENT)
-                intent.addCategory(Intent.CATEGORY_OPENABLE)
-                intent.type = "text/*"
-                startActivityForResult(intent, 42);
-
-            }
         }
         findViewById<DrawerLayout>(R.id.drawer_layout).closeDrawer(GravityCompat.START)
         return true
@@ -203,28 +192,8 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         else
             Log.e("Error", "Error")
 
-        if (requestCode == IMPORT_FILE && resultCode == RESULT_OK) {
-            val uri: Uri? = data!!.data
-            readText(uri)
-        } else if (resultCode == Activity.RESULT_OK && requestCode == MY_PROFILE_REQUEST_CODE) {
+        if (resultCode == Activity.RESULT_OK && requestCode == MY_PROFILE_REQUEST_CODE) {
             FirestoreClass().loadUserData(this)
         }
-    }
-
-    private fun readText(uri: Uri?) {
-        val cr: ContentResolver = contentResolver
-        if (uri != null) {
-            cr.takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION)
-            var inputStream: InputStream? = null
-            inputStream = cr.openInputStream(uri)
-            val reader: BufferedReader = BufferedReader(InputStreamReader(inputStream))
-            TaskListActivity().importBackup(reader)
-            if (inputStream != null)
-                closeQuietlyIS(inputStream)
-        }
-    }
-
-    private fun closeQuietlyIS(closeable: AutoCloseable) {
-        closeable.close();
     }
 }

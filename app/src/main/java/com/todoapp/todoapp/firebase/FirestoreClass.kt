@@ -19,15 +19,17 @@ class FirestoreClass : BaseActivity() {
 
     fun registerUser(
         activity: SignUpActivity,
-        userInfo: User
+        userInfo: User,
+        google: Boolean
     ) // activity e' l'attivita' in cui viene richiamato il metodo registerUser
     {
         mFireStore.collection(Constants.USERS).document(getCurrentUserId()).set(
             userInfo,
             SetOptions.merge()
         ).addOnSuccessListener {
-            FirebaseAuth.getInstance().currentUser!!.sendEmailVerification()
-            activity.userRegisteredSuccess()
+            if(!google)
+                FirebaseAuth.getInstance().currentUser!!.sendEmailVerification()
+            activity.userRegisteredSuccess(google)
         }.addOnFailureListener { e -> // e rappresenta exception
             Log.e(activity.javaClass.simpleName, "Errore", e)
         }
@@ -122,37 +124,17 @@ class FirestoreClass : BaseActivity() {
     fun createBoard(createBoardActivity: CreateBoardActivity, board: Board) {
         mFireStore.collection(Constants.BOARDS).document().set(board, SetOptions.merge())
             .addOnSuccessListener {
-                Log.e(createBoardActivity.javaClass.simpleName, "com.todoapp.todoapp.models.Board creata correttamente!")
+                Log.e(createBoardActivity.javaClass.simpleName, "Board creata correttamente!")
 
                 Toast.makeText(
                     createBoardActivity,
-                    "com.todoapp.todoapp.models.Board creata correttamente!",
+                    "Board creata correttamente!",
                     Toast.LENGTH_LONG
                 ).show()
                 createBoardActivity.boardCreatedSuccessfully()
             }.addOnFailureListener { e ->
                 createBoardActivity.hideProgressDialog()
                 Log.e(createBoardActivity.javaClass.simpleName, "Errore createboard", e)
-            }
-    }
-
-    fun createBoardFromBackup(createBoardActivity: CreateBoardActivity, board: Board) {
-        mFireStore.collection(Constants.BOARDS).document().set(board, SetOptions.merge())
-            .addOnSuccessListener {
-                Log.e(createBoardActivity.javaClass.simpleName, "com.todoapp.todoapp.models.Board creata correttamente!")
-                Toast.makeText(
-                    createBoardActivity,
-                    "com.todoapp.todoapp.models.Board creata correttamente!",
-                    Toast.LENGTH_LONG
-                ).show()
-                //boardActivity.boardCreatedSuccessfullyFromBackup()
-            }.addOnFailureListener { e ->
-                createBoardActivity.hideProgressDialog()
-                Log.e(
-                    createBoardActivity.javaClass.simpleName,
-                    "Errore createboardfrombackup",
-                    e
-                )
             }
     }
 
@@ -214,8 +196,8 @@ class FirestoreClass : BaseActivity() {
             .document(boardDetails.documentId)
             .delete()
             .addOnSuccessListener {
-                Log.e(activity.javaClass.simpleName, "com.todoapp.todoapp.models.Board cancellata correttamente!")
-                Toast.makeText(activity, "com.todoapp.todoapp.models.Board cancellata correttamente!", Toast.LENGTH_SHORT)
+                Log.e(activity.javaClass.simpleName, "Board cancellata correttamente!")
+                Toast.makeText(activity, "Board cancellata correttamente!", Toast.LENGTH_SHORT)
                     .show()
                 activity.deleteBoardSuccessfully()
             }
@@ -230,7 +212,7 @@ class FirestoreClass : BaseActivity() {
             .document(documentId)
             .update(Constants.NAME, newName)
             .addOnSuccessListener {
-                Toast.makeText(activity, "com.todoapp.todoapp.models.Board modificata correttamente!", Toast.LENGTH_SHORT)
+                Toast.makeText(activity, "Board modificata correttamente!", Toast.LENGTH_SHORT)
                     .show()
                 activity.editBoardSuccessfully()
             }

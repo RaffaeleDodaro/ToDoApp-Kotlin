@@ -49,7 +49,7 @@
                         android:id="@+id/et_name_card_details"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="@string/hint_card_name"
+                        android:hint="@string/hint_subactivity_name"
                         android:inputType="text"
                         android:textSize="@dimen/et_text_size" />
                 </com.google.android.material.textfield.TextInputLayout>

@@ -28,7 +28,9 @@ class SplashActivity : BaseActivity() {
                 WindowManager.LayoutParams.FLAG_FULLSCREEN
             )
         }
-
+//modifico il font dentro la splashscreen
+        val tf:Typeface = Typeface.createFromAsset(assets,"Bulletto Killa.ttf")
+        findViewById<TextView>(R.id.tv_app_name).typeface=tf
         //eseguo la splashscreen per 2 sec
         Handler(Looper.getMainLooper()).postDelayed(
             {

@@ -15,6 +15,7 @@ import androidx.appcompat.widget.AppCompatEditText
 import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.net.toUri
 import com.bumptech.glide.Glide
 import com.todoapp.todoapp.R
 import com.todoapp.todoapp.firebase.FirestoreClass
@@ -25,7 +26,7 @@ import java.io.IOException
 class CreateBoardActivity : BaseActivity() {
 
     private lateinit var userName: String
-    private var mSelectedImageFileUri: Uri? = null
+    private var mSelectedImageFileUri: Uri? = "https://www.campusfrance.org/sites/default/files/medias/images/2020-07/vignette-job-bis.jpg".toUri()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -124,18 +125,9 @@ class CreateBoardActivity : BaseActivity() {
         FirestoreClass().createBoard(this, board)
     }
 
-    fun createBoardFromBackup(board: Board) {
-        FirestoreClass().createBoardFromBackup(this, board)
-    }
-
     fun boardCreatedSuccessfully() {
         hideProgressDialog()
         setResult(Activity.RESULT_OK)
-        finish()
-    }
-
-    fun boardCreatedSuccessfullyFromBackup() {
-        //setResult(Activity.RESULT_OK)
         finish()
     }
 }

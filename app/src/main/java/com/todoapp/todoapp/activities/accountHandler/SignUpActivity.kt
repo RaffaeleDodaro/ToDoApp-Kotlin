@@ -119,7 +119,7 @@ class SignUpActivity : BaseActivity() {
                         user.email!!
                     ) // uid Returns a string used to uniquely identify your user in your Firebase project's
 
-                    FirestoreClass().registerUser(this, user2)
+                    FirestoreClass().registerUser(this, user2, true)
                     updateUI(user)
                 } else {
                     Log.w(TAG, "signUpWithCredential:failure", task.exception)
@@ -191,7 +191,7 @@ class SignUpActivity : BaseActivity() {
                             registeredEmail
                         ) // uid Returns a string used to uniquely identify your user in your Firebase project's
 
-                        FirestoreClass().registerUser(this, user)
+                        FirestoreClass().registerUser(this, user,false)
                     } else {
                         Toast.makeText(this, "Utente gia' presente", Toast.LENGTH_SHORT).show()
                         hideProgressDialog()
@@ -200,12 +200,19 @@ class SignUpActivity : BaseActivity() {
         }
     }
 
-    fun userRegisteredSuccess() {
-        Toast.makeText(
-            this,
-            "Ti sei registrato correttamente. Controlla l'email",
-            Toast.LENGTH_LONG
-        ).show()
+    fun userRegisteredSuccess(google:Boolean) {
+        if(!google)
+            Toast.makeText(
+                this,
+                "Ti sei registrato correttamente. Controlla l'email!",
+                Toast.LENGTH_LONG
+            ).show()
+        else
+            Toast.makeText(
+                this,
+                "Ti sei registrato correttamente.",
+                Toast.LENGTH_LONG
+            ).show()
 
         hideProgressDialog()
         finish()

@@ -84,7 +84,6 @@ class CardDetailsActivity : BaseActivity() {
     }
 
     private fun updateCardDetails() {
-
         // Here we have updated the card name using the data model class.
         val card = Card(
             findViewById<EditText>(R.id.et_name_card_details).text.toString(),
@@ -129,7 +128,7 @@ class CardDetailsActivity : BaseActivity() {
         //set message for alert dialog
         builder.setMessage(
             resources.getString(
-                R.string.confirmation_message_to_delete_card,
+                R.string.confirmation_message_to_delete_subactivity,
                 cardName
             )
         )

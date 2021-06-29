@@ -28,14 +28,6 @@
                 android:background="#00aaaaaa">
 
                 <Button
-                    android:id="@+id/btn_export"
-                    android:layout_width="50dp"
-                    android:layout_height="wrap_content"
-                    android:background="#00aaaaaa"
-                    android:drawableStart="@android:drawable/ic_menu_save"
-                    app:showAsAction="always" />
-
-                <Button
                     android:id="@+id/btn_edit"
                     android:layout_width="50dp"
                     android:layout_height="wrap_content"

@@ -21,7 +21,7 @@
             android:foreground="?attr/selectableItemBackground"
             android:gravity="center"
             android:padding="@dimen/task_item_add_item_text_padding"
-            android:text="@string/action_add_list"
+            android:text="@string/action_add_activity"
             android:textColor="@color/colorAccent"
             android:textSize="@dimen/task_item_add_item_text_size"
             android:visibility="gone"
@@ -57,8 +57,8 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:autofillHints="@string/hint_list_name"
-                    android:hint="@string/hint_list_name"
+                    android:autofillHints="@string/hint_activity_name"
+                    android:hint="@string/hint_activity_name"
                     android:inputType="text" />
 
                 <ImageButton
@@ -157,8 +157,8 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:autofillHints="@string/hint_list_name"
-                        android:hint="@string/hint_list_name"
+                        android:autofillHints="@string/hint_activity_name"
+                        android:hint="@string/hint_activity_name"
                         android:inputType="text" />
 
                     <ImageButton
@@ -208,8 +208,8 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:autofillHints="@string/hint_card_name"
-                        android:hint="@string/hint_card_name"
+                        android:autofillHints="@string/hint_subactivity_name"
+                        android:hint="@string/hint_subactivity_name"
                         android:inputType="text" />
 
                     <ImageButton
@@ -232,7 +232,7 @@
                 android:foreground="?attr/selectableItemBackground"
                 android:gravity="center"
                 android:padding="@dimen/task_item_add_item_text_padding"
-                android:text="@string/action_add_card"
+                android:text="@string/action_add_subactivity"
                 android:textColor="@color/colorAccent"
                 android:textSize="@dimen/task_item_add_item_text_size"
                 tools:visibility="visible" />

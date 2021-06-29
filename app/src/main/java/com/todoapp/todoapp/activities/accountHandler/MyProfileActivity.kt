@@ -124,6 +124,7 @@ class MyProfileActivity : BaseActivity() {
                 updateData()
             }
         }
+
     }
 
     fun setUserDataInUI(user: User) {

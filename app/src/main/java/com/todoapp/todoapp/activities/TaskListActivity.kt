@@ -31,7 +31,6 @@ class TaskListActivity : BaseActivity() {
     //variabili globali che vengono inizializzate piu' tardi
     private lateinit var boardDetails: Board
     private lateinit var boardDocumentId: String
-    private val REQUEST_SAF = 101
 
     private val mFireStore = FirebaseFirestore.getInstance()
 
@@ -58,11 +57,9 @@ class TaskListActivity : BaseActivity() {
         }
         findViewById<Toolbar>(R.id.toolbar_task_list_activity).setNavigationOnClickListener {
             onBackPressed()
-            //Set a listener to respond to navigation events.
-            //This listener will be called whenever the user clicks the navigation button at the start of the toolbar. An icon must be set for the navigation button to appear.
-        }
-        findViewById<Button>(R.id.btn_export).setOnClickListener {
-            exportData()
+            // Set a listener to respond to navigation events.
+            // This listener will be called whenever the user clicks the navigation button at the
+            // start of the toolbar. An icon must be set for the navigation button to appear.
         }
         findViewById<Button>(R.id.btn_deleteBoard).setOnClickListener {
             alertDialogForDeleteBoard(boardDetails.name)
@@ -86,7 +83,7 @@ class TaskListActivity : BaseActivity() {
         setupActionBar()
 
         // Here we are appending an item view for adding a list task list for the board.
-        val addTaskList = Task(resources.getString(R.string.add_list))
+        val addTaskList = Task(resources.getString(R.string.add_activity))
         board.taskList.add(addTaskList)
 
         val rv = findViewById<RecyclerView>(R.id.rv_task_list)
@@ -132,57 +129,8 @@ class TaskListActivity : BaseActivity() {
         ) {
             showProgressDialog(resources.getString(R.string.please_wait))
             FirestoreClass().getBoardDetails(this, boardDocumentId)
-        } else if (requestCode == REQUEST_SAF) {
-            when (resultCode) {
-                RESULT_OK ->
-                    if (data!!.data != null) {
-                        exportBackup(data.data)
-                    }
-
-                RESULT_CANCELED -> {
-                }
-            }
         } else
             Log.e("Error", "Error")
-    }
-
-    private fun exportBackup(data: Uri?) {
-        val outputStream: OutputStream?
-        try {
-
-            outputStream = data?.let { contentResolver.openOutputStream(it) }
-            val bw = BufferedWriter(OutputStreamWriter(outputStream))
-
-            bw.write(boardDetails.name + "\n") //"Nome della lista: " +
-            bw.write(boardDetails.image + "\n") //"Immagine della lista: " +
-            bw.write(boardDetails.createdBy + "\n") //"Creato da: " +
-            for (i in boardDetails.assignedTo)
-                bw.write(i + "\n") //"ASSEGNATO A: " +
-
-            bw.write("fine assegnato a\n")
-            var k = 0
-            while (k < boardDetails.taskList.size - 1) {
-                bw.write("[" + boardDetails.taskList[k].title + "\n") //"Nome Task: " +
-                bw.write("]" + boardDetails.taskList[k].createdBy + "\n") //"Nome CreatoreTAsk: " +
-                var j = 0
-                while (j < boardDetails.taskList[k].cards.size) {
-                    bw.write("{" + boardDetails.taskList[k].cards[j].name + "\n")//"Nome card: " +
-                    bw.write("}" + boardDetails.taskList[k].cards[j].createdBy + "\n")//"Nome createdBy: " +
-
-                    for ((f, l) in boardDetails.taskList[k].cards[j].assignedTo.withIndex()) {
-                        bw.write("(" + boardDetails.taskList[k].cards[j].assignedTo[f] + "\n")
-                    }//"Nome assignedTo: " +
-                    j += 1
-                }
-                k += 1
-            }
-            bw.write("\n")
-
-            bw.flush()
-            bw.close()
-        } catch (e: IOException) {
-            e.printStackTrace()
-        }
     }
 
     fun deleteTaskList(position: Int) {
@@ -221,168 +169,6 @@ class TaskListActivity : BaseActivity() {
         intent.putExtra(Constants.TASK_LIST_ITEM_POSITION, taskListPosition)
         intent.putExtra(Constants.CARD_LIST_ITEM_POSITION, cardPosition)
         startActivityForResult(intent, CARD_DETAILS_REQUEST_CODE)
-    }
-
-    private fun exportData() {
-        val intent = Intent(Intent.ACTION_CREATE_DOCUMENT)
-            .setType("text/plain")
-            .addCategory(Intent.CATEGORY_OPENABLE)
-        intent.putExtra(Intent.EXTRA_TITLE, boardDetails.name + ".txt");
-
-        startActivityForResult(intent, REQUEST_SAF)
-    }
-
-    fun importBackup(reader: BufferedReader) {
-        //showProgressDialog("Attendi")
-        val array = CopyOnWriteArrayList<String>()
-        while (reader.ready()) {
-            val line: String = reader.readLine()
-            array.add(line)
-        }
-
-
-        var nomeBoard: String = array[0]
-        var immagineBoard: String = array[1]
-        var creatoDaBoard: String = array[2]
-
-        array.removeAt(2)
-        array.removeAt(1)
-        array.removeAt(0)
-
-        println(nomeBoard)
-        println(immagineBoard)
-        println(creatoDaBoard)
-
-        val assignedUsersArrayList: ArrayList<String> = ArrayList()
-        //println("ARRAY[0]: " + array[0])
-        //println("confronto: " + array[0].equals("fine assegnato a\n", true))
-        while (!(array[0].contains("fine assegnato a"))) {
-            assignedUsersArrayList.add(array[0])
-            array.removeAt(0)
-        }
-        array.removeAt(0)
-        //println(assignedUsersArrayList[0])
-
-
-        assignedUsersArrayList.add(FirestoreClass().getCurrentUserId())
-        println(assignedUsersArrayList)
-        val board: Board = Board(nomeBoard, immagineBoard, creatoDaBoard, assignedUsersArrayList)
-
-
-        CreateBoardActivity().createBoardFromBackup(board)
-
-
-
-
-
-
-
-        mFireStore.collection(Constants.BOARDS)
-            // A where array query as we want the list of the board in which the user is assigned. So here you can pass the current user id.
-            .whereArrayContains(Constants.ASSIGNED_TO, FirestoreClass().getCurrentUserId())
-            .get() // Will get the documents snapshots.
-            .addOnSuccessListener { document ->
-
-                for (i in document.documents) {
-                    val board2 = i.toObject(Board::class.java)!!
-                    if (board2.name == board.name) {
-                        board2.documentId = i.id
-                        FirestoreClass().getBoardDetails(this, board2.documentId)
-                        var j = -1
-                        var nomeTask: String = ""
-                        var nomeCreatoreTask: String = ""
-                        var nomeCard: String = ""
-                        var nomeCreatoreCard: String = ""
-                        for (i in array) {
-                            if (i.startsWith("[")) {
-                                j = -1
-                                nomeTask = deleteFirstCharacter(i)
-                            }
-
-                            if (i.startsWith("]"))
-                                nomeCreatoreTask = deleteFirstCharacter(i)
-
-                            if (i.startsWith("{")) {
-                                nomeCard = deleteFirstCharacter(i)
-                                j++
-                            }
-
-                            if (i.startsWith("}"))
-                                nomeCreatoreCard = deleteFirstCharacter(i)
-
-                            if (nomeTask != "" && nomeCreatoreTask != "" &&
-                                nomeCard != "" && nomeCreatoreCard != ""
-                            ) {
-
-                                println("DENTRO IF nome task $nomeTask $nomeCreatoreTask")
-
-                                var task = Task(nomeTask, nomeCreatoreTask)
-                                board2.taskList.add(0, task)
-
-
-                                val taskListHashMap = HashMap<String, Any>()
-                                taskListHashMap[Constants.TASK_LIST] = board2.taskList
-
-                                mFireStore.collection(Constants.BOARDS)
-                                    .document(board2.documentId)
-                                    .update(taskListHashMap)
-                                    .addOnSuccessListener {
-                                        println("task creata correttamente")
-                                    }
-                                    .addOnFailureListener { e ->
-                                    }
-
-
-/*
-                                    val cardAssignedUsersList: ArrayList<String> = ArrayList()
-                                    cardAssignedUsersList.add(FirestoreClass().getCurrentUserId())
-                                    val card = Card(nomeCard, FirestoreClass().getCurrentUserId(),
-                                            cardAssignedUsersList)
-
-                                    val cardsList = board2.taskList[j].cards
-                                    cardsList.add(card)
-
-                                    task = Task(
-                                            nomeTask
-                                            nomeCreatoreTask,
-                                            cardsList
-                                    )
-
-
-                                    board2.taskList[j] = task
-
-
-
-
-                                    //codice di addUpdateTaskList firestoreclass
-                                    val taskListHashMap = HashMap<String, Any>()
-                                    taskListHashMap[Constants.TASK_LIST] = board2.taskList
-
-                                    mFireStore.collection(Constants.BOARDS)
-                                            .document(board2.documentId)
-                                            .update(taskListHashMap)
-                                            .addOnSuccessListener {
-                                                println("card importate")
-//                                                    setResult(Activity.RESULT_OK)
-//                                                    finish()
-                                            }
-                                            .addOnFailureListener { e ->
-                                            }
-
-*/
-                                //nomeTask = ""
-                            }
-                        }
-                    }
-                }
-            }
-
-            .addOnFailureListener { e ->
-            }
-    }
-
-    private fun deleteFirstCharacter(stringa: String): String {
-        return StringBuilder(stringa).deleteCharAt(0).toString()
     }
 
     fun deleteBoardSuccessfully() {
